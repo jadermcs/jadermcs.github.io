@@ -1,12 +1,8 @@
 ---
-layout: post
-title: Modelos Regressivos Compostos para Estimativas de Preço
-lang: pt
-header-img: img/ensemble/0020.png
+title: Linear Ensemble
 date: 2017-08-17 10:00:00
 tags: [regressão, modelos-compostos]
 author: Jader Martins
-comments: true
 ---
 
 # Modelos Regressivos Compostos para Estimativas de Preço
@@ -178,15 +174,7 @@ sns.set(style="whitegrid", palette="coolwarm")
 df.plot.box(figsize=(12,6), patch_artist=True)
 ```
 
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f4ab6772cf8>
-
-
-
-
-![png](/img/ensemble/output_6_1.png)
+<img src="/images/output_6_1.png">
 
 
 Primeiro carrego as bibliotecas de gráfico que utilizarei no decorrer do texto, defino configurações como estilo e paleta de cores para o gráfico, em seguida monto um dataframe _prices_ para receber duas colunas de valores, uma com o preço sem transformação, outra com o preço tranformado pela função log1p (f.log(x+1)).
@@ -199,15 +187,7 @@ prices.hist(color="#F1684E", bins=50)
 plt.ylabel("Quantidade")
 ```
 
-
-
-
-    <matplotlib.text.Text at 0x7f4ab6535e10>
-
-
-
-
-![png](/img/ensemble/output_8_1.png)
+<img src="/images/output_8_1.png">
 
 
 Podemos ver que nossa distribuição ficou menos espaçada e um pouco mais próxima de uma distribuição normal, mas o Python conta com uma função estatística que nos ajuda avaliar se isso será necessário ou não, através do teste de Box-Cox que terá indícios com o grau de Obliquidade (Skewness).
@@ -244,15 +224,7 @@ plt.xlabel("Preço")
 plt.ylabel("Quantidade")
 ```
 
-
-
-
-    <matplotlib.text.Text at 0x7f4ab63bfe80>
-
-
-
-
-![png](/img/ensemble/output_12_1.png)
+<img src="/images/output_12_1.png">
 
 
 
@@ -273,15 +245,7 @@ plt.xlabel("Preço")
 plt.ylabel("Quantidade")
 ```
 
-
-
-
-    <matplotlib.text.Text at 0x7f4ab62d1240>
-
-
-
-
-![png](/img/ensemble/output_14_1.png)
+<img src="/images/output_14_1.png">
 
 
 Vemos que as distribuições ficaram muito mais centradas e tendendo a distribuição gaussiana[^2], o que será excelente para o ajuste dos nossos estimadores[^3]. Sendo a função logarítmica e a função f.x+1 bijetoras, poderemos retornar ao nosso valor original assim que acabarmos o ajuste do modelo.
@@ -362,15 +326,7 @@ Finalizado nosso ajuste nos dados após tanto trabalho vamos agora para o ajuste
 df.plot.box(figsize=(12,6), patch_artist=True)
 ```
 
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f4ab60049b0>
-
-
-
-
-![png](/img/ensemble/output_20_1.png)
+<img src="/images/output_20_1.png">
 
 
 Como já discutido em outras postagens, devemos separar os dados em um conjunto de treino e teste, para treinar nosso modelo e para saber quão bem nosso modelo irá prever para casos desconhecidos. Leia [essa publicação](/2017/04/29/Um-Olhar-Descontraido-Sobre-o-Dilema-Vies-Variancia/) para entender melhor.
@@ -440,15 +396,7 @@ predictions = pd.DataFrame({"XGBoost":np.expm1(xgbpred), "Ridge":np.expm1(linpre
 predictions.plot(x = "XGBoost", y = "Ridge", kind = "scatter", color="#85C8DD")
 ```
 
-
-
-
-    <matplotlib.axes._subplots.AxesSubplot at 0x7f4ab32e67b8>
-
-
-
-
-![png](/img/ensemble/output_30_1.png)
+<img src="/images/output_30_1.png">
 
 
 Como já explicado, uma baixa correlação tende a melhorar significativamente nossa predição, visualmente temos algo significante, vamos olhar agora isso em números
