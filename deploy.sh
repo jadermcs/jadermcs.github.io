@@ -19,7 +19,8 @@ rsync -a --filter='P _site/'      \
          --filter='P .gitignore'  \
          --filter='P .stack-work' \
          --delete-excluded        \
-         _site/ .
+         _site/ .                 \
+         CNAME .
 
 # Commit
 git add -A
