@@ -174,7 +174,7 @@ sns.set(style="whitegrid", palette="coolwarm")
 df.plot.box(figsize=(12,6), patch_artist=True)
 ```
 
-<img src="/images/output_6_1.png">
+<img src="/images/output_6_1.png" width=600px>
 
 
 Primeiro carrego as bibliotecas de gráfico que utilizarei no decorrer do texto, defino configurações como estilo e paleta de cores para o gráfico, em seguida monto um dataframe _prices_ para receber duas colunas de valores, uma com o preço sem transformação, outra com o preço tranformado pela função log1p (f.log(x+1)).
@@ -326,7 +326,7 @@ Finalizado nosso ajuste nos dados após tanto trabalho vamos agora para o ajuste
 df.plot.box(figsize=(12,6), patch_artist=True)
 ```
 
-<img src="/images/output_20_1.png">
+<img src="/images/output_20_1.png" width=600px>
 
 
 Como já discutido em outras postagens, devemos separar os dados em um conjunto de treino e teste, para treinar nosso modelo e para saber quão bem nosso modelo irá prever para casos desconhecidos. Leia [essa publicação](/2017/04/29/Um-Olhar-Descontraido-Sobre-o-Dilema-Vies-Variancia/) para entender melhor.
