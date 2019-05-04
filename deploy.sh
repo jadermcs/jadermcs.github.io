@@ -21,6 +21,7 @@ rsync -a --filter='P _site/'      \
          --filter='P .stack-work' \
          --delete-excluded        \
          _site/ .                 \
+         favicon.ico .            \
          CNAME .
 
 # Commit
