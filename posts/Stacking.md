@@ -12,16 +12,15 @@ Por ser uma tecnica relativamente nova, o "Stacked Generalization" ainda não te
 
 <img src="/images/stacking.png" width=600px>
 
-Em uma [postagem anterior](/posts/Linear-Ensemble.html) apresentei a combinação linear de estimadores, nela ajustamos $N$ modelos a um conjunto de dados \\(D\\) e a priori definimos pesos \\(W\\) para eles combinando em um somatório:
-
-
-$$\text{given a priori} \ W = (w_1,w_2,...w_N) \ \text{and} \sum W = 1$$
+Em uma [postagem anterior](/posts/Linear-Ensemble.html) apresentei a combinação linear de estimadores, nela ajustamos $N$ modelos a um conjunto de dados $D$ e a priori definimos pesos $W$ para eles combinando em um somatório:
 
 $$\sum_{i=1}^{N} w_{i}M_{i}$$
 
-com isso a media ponderada das predições no geral vão ser menos enviesadas para certas regiões e podem generalizar mais, porém este metodo apresenta duas limitações, os pesos não podem ser alterados depois de verificar o desempenho (se não estariamos agindo como um meta-estimador em cima dos dados de teste) e é uma combinação extremamente simples, não aproveitando bem os pontos fortes dos estimadores \\(M\\) para certas regiões.
+$$\text{given a priori} \ W = (w_1,w_2,...w_N) \ \text{and} \sum W = 1$$
 
-Wolpert então propõe uma alternativa a isso, e se tornasemos os pesos \\(W\\) em um problema de aprendizado? ou melhor, não só aprendessemos como combinar nossas predições mas também as combinassemos de forma não-linear usando um meta-estimador?
+com isso a media ponderada das predições no geral vão ser menos enviesadas para certas regiões e podem generalizar mais, porém este metodo apresenta duas limitações, os pesos não podem ser alterados depois de verificar o desempenho (se não estariamos agindo como um meta-estimador em cima dos dados de teste) e é uma combinação extremamente simples, não aproveitando bem os pontos fortes dos estimadores $M$ para certas regiões.
+
+Wolpert então propõe uma alternativa a isso, e se tornasemos os pesos $W$ em um problema de aprendizado? ou melhor, não só aprendessemos como combinar nossas predições mas também as combinassemos de forma não-linear usando um meta-estimador?
 
 Meta-estimadores são aqueles que usam modelos base para combina-los ou seleciona-los para melhorar em uma metrica de desempenho, por exemplo você leitor quando decide entre usar uma random-forest ou uma regressão logistica para prever o seu modelo você está sendo um meta-estimador. Porém aqui surge o problema de generalização, se continuar melhorando sua regressão ou rforest você poderá acabar dando overfitting aos dados e não conseguindo generalizar, aqui então é necessário aplicar tecnicas de validação cruzada para selecionar o modelo, o mesmo ocorrerá para o empilhamento.
 
@@ -142,7 +141,9 @@ Aqui separamos em treino e teste de forma (pseudo)aleatorizada para no final ava
 
 
 ```python
-xtrain, xtest, ytrain, ytest = train_test_split(df.drop('Price', axis=1), df.Price, test_size=.3, random_state=42)
+xtrain, xtest, ytrain, ytest =\
+    train_test_split(df.drop('Price', axis=1), df.Price, test_size=.3,
+                     random_state=42)
 xtrain.head()
 ```
 
@@ -251,7 +252,8 @@ import xgboost as xgb
 
 en = ElasticNet()
 knn = KNeighborsRegressor()
-gbm = xgb.XGBRegressor(n_estimators=1000) # we will early stop to not overfit
+# we will early stop to not overfit
+gbm = xgb.XGBRegressor(n_estimators=1000)
 ```
 
 Agora se inicia a criação dos atributos empilhados, para garantir que não tenha vieses e não fiquemos com poucos dados para treinar o meta-etimador os criamos por kfolds, sendo gerados os subconjuntos treino e teste, treinamos o modelo no conjunto de treino e predizemos o valor para o conjunto de teste, da seguinte forma:
@@ -275,10 +277,7 @@ xtrain['knn'] = 0
 for train_index, test_index in kf.split(xtrain):
     knn.fit(xtrain.iloc[train_index, :-2], ytrain.iloc[train_index])
     xtrain.iloc[test_index,9] = knn.predict(xtrain.iloc[test_index, :-2])
-```
 
-
-```python
 xtrain.head()
 ```
 
