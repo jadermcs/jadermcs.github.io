@@ -11,7 +11,7 @@ stack exec site build
 
 # Get previous files
 git fetch --all
-git checkout -b master --track origin/master
+git checkout master
 
 # Overwrite existing files with new files
 rsync -a --filter='P _site/'      \
