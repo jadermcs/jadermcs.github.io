@@ -12,7 +12,7 @@ Por ser uma tecnica relativamente nova, o "Stacked Generalization" ainda não te
 
 <img src="/images/stacking.png" width=600px>
 
-Em uma [postagem anterior](/posts/Linear-Ensemble.html) apresentei a combinação linear de estimadores, nela ajustamos \\(N\\) modelos a um conjunto de dados \\(D\\) e a priori definimos pesos \\(W\\) para eles combinando em um somatório:
+Em uma [postagem anterior](/posts/Linear-Ensemble.html) apresentei a combinação linear de estimadores, nela ajustamos $N$ modelos a um conjunto de dados \\(D\\) e a priori definimos pesos \\(W\\) para eles combinando em um somatório:
 
 
 $$\text{given a priori} \ W = (w_1,w_2,...w_N) \ \text{and} \sum W = 1$$
