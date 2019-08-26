@@ -15,5 +15,6 @@ cabal.sandbox.config
 *.hp
 *.lock
 .stack-work/
+.ipynb_checkpoints/
 _cache/
 _site/
