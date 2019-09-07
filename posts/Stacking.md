@@ -5,26 +5,25 @@ lang: pt
 date: 2019-04-22 12:59:07
 tags: [ensemble, meta-learning]
 author: Jader Martins
-comments: true
 ---
 
-Por ser uma tecnica relativamente nova, o "Stacked Generalization" ainda não tem uma tradução amplamente adotada, aqui proponho "empilhamento", tradução literal para seu outro nome (stacking), como o termo para me referir a ela. Introduzida por Wolpert em 1992[^1], essa tecnica de generalização consiste em combinar de formar não linear estimadores para corrigir seus vieses a um dado conjunto de treino, agregando suas capacidades para que se tenha uma melhor previsão.
+Introduced by Wolpert in 1992[^1], this generalization technique consists of combining nonlinear estimators to correct their biases to a given training set, adding their capabilities for better prediction[^2].
 
 <img src="/images/stacking.png" width=600px>
 
-Em uma [postagem anterior](/posts/Linear-Ensemble.html) apresentei a combinação linear de estimadores, nela ajustamos $N$ modelos a um conjunto de dados $D$ e a priori definimos pesos $W$ para eles combinando em um somatório:
+In a [previous post](/posts/Linear-Ensemble.html) I presented the linear combination of estimators, in it we adjusted $N$ models to a $D$ dataset and a priori we defined $W$ weights for them by combining into one summation:
 
 $$\sum_{i=1}^{N} w_{i}M_{i}$$
 
 $$\text{given a priori} \ W = (w_1,w_2,...w_N) \ \text{and} \sum W = 1$$
 
-com isso a media ponderada das predições no geral vão ser menos enviesadas para certas regiões e podem generalizar mais, porém este metodo apresenta duas limitações, os pesos não podem ser alterados depois de verificar o desempenho (se não estariamos agindo como um meta-estimador em cima dos dados de teste) e é uma combinação extremamente simples, não aproveitando bem os pontos fortes dos estimadores $M$ para certas regiões.
+With this the weighted average of the predictions in general will be less biased for certain regions and may generalize more, but this method has two limitations, the weights cannot be changed after verifying the performance (if we would not be acting as a meta-estimator in test data) and is an extremely simple combination, not leveraging the strengths of the $M$ estimators for certain regions.
 
-Wolpert então propõe uma alternativa a isso, e se tornasemos os pesos $W$ em um problema de aprendizado? ou melhor, não só aprendessemos como combinar nossas predições mas também as combinassemos de forma não-linear usando um meta-estimador?
+Wolpert then proposes an alternative to this, what if we make $W$ pesos a learning problem? or rather, not only learn how to combine our predictions but also combine them nonlinearly using a meta estimator?
 
-Meta-estimadores são aqueles que usam modelos base para combina-los ou seleciona-los para melhorar em uma metrica de desempenho, por exemplo você leitor quando decide entre usar uma random-forest ou uma regressão logistica para prever o seu modelo você está sendo um meta-estimador. Porém aqui surge o problema de generalização, se continuar melhorando sua regressão ou rforest você poderá acabar dando overfitting aos dados e não conseguindo generalizar, aqui então é necessário aplicar tecnicas de validação cruzada para selecionar o modelo, o mesmo ocorrerá para o empilhamento.
+Meta estimators are those who use base models to combine them or select them to improve on a performance metric, for example you reader when deciding between using a random forest or a logistic regression to predict your model you are being a meta estimator. But here the problem of generalization arises, if you continue to improve your regression or rforest you may end up overfitting the data and not being able to generalize, here then it is necessary to apply cross validation techniques to select the model, the same will happen for the stacking.
 
-Para o empilhamento é ideal que o dataset seja relativamente grande, o conselho do autor é pelo menos mil registros. Começamos nosso exemplo carregando um dataset relativamente grande, 20mil registros, esse dataset tem como atributos caracteristicas de casas da california e como valor alvo o preço dela, os dados já estão normalizados e não iremos fazer qualquer alteração nele.
+For stacking it is ideal that the dataset is relatively large, the author's advice is at least one thousand records. We start our example by loading a relatively large dataset, 20,000 records, this dataset has as characteristic attributes of california houses and as a target value its price, the data is already normalized and we will not make any changes to it.
 
 
 ```python
@@ -72,7 +71,7 @@ df.head()
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
+      <td>0</td>
       <td>8.3252</td>
       <td>41.0</td>
       <td>6.984127</td>
@@ -84,7 +83,7 @@ df.head()
       <td>4.526</td>
     </tr>
     <tr>
-      <th>1</th>
+      <td>1</td>
       <td>8.3014</td>
       <td>21.0</td>
       <td>6.238137</td>
@@ -96,7 +95,7 @@ df.head()
       <td>3.585</td>
     </tr>
     <tr>
-      <th>2</th>
+      <td>2</td>
       <td>7.2574</td>
       <td>52.0</td>
       <td>8.288136</td>
@@ -108,7 +107,7 @@ df.head()
       <td>3.521</td>
     </tr>
     <tr>
-      <th>3</th>
+      <td>3</td>
       <td>5.6431</td>
       <td>52.0</td>
       <td>5.817352</td>
@@ -120,7 +119,7 @@ df.head()
       <td>3.413</td>
     </tr>
     <tr>
-      <th>4</th>
+      <td>4</td>
       <td>3.8462</td>
       <td>52.0</td>
       <td>6.281853</td>
@@ -137,7 +136,7 @@ df.head()
 
 
 
-Aqui separamos em treino e teste de forma (pseudo)aleatorizada para no final avaliarmos o desempenho.
+Here we separate into training and testing in a (pseudo) random way to finally evaluate performance.
 
 
 ```python
@@ -180,7 +179,7 @@ xtrain.head()
   </thead>
   <tbody>
     <tr>
-      <th>7061</th>
+      <td>7061</td>
       <td>4.1312</td>
       <td>35.0</td>
       <td>5.882353</td>
@@ -191,7 +190,7 @@ xtrain.head()
       <td>-118.02</td>
     </tr>
     <tr>
-      <th>14689</th>
+      <td>14689</td>
       <td>2.8631</td>
       <td>20.0</td>
       <td>4.401210</td>
@@ -202,7 +201,7 @@ xtrain.head()
       <td>-117.09</td>
     </tr>
     <tr>
-      <th>17323</th>
+      <td>17323</td>
       <td>4.2026</td>
       <td>24.0</td>
       <td>5.617544</td>
@@ -213,7 +212,7 @@ xtrain.head()
       <td>-120.14</td>
     </tr>
     <tr>
-      <th>10056</th>
+      <td>10056</td>
       <td>3.1094</td>
       <td>14.0</td>
       <td>5.869565</td>
@@ -224,7 +223,7 @@ xtrain.head()
       <td>-121.00</td>
     </tr>
     <tr>
-      <th>15750</th>
+      <td>15750</td>
       <td>3.3068</td>
       <td>52.0</td>
       <td>4.801205</td>
@@ -240,7 +239,7 @@ xtrain.head()
 
 
 
-Agora carregamos a validação-cruzada especificamente a [KFold](https://scikit-learn.org/stable/modules/cross_validation.html#k-fold), para que não "percamos" muitos dados, e os modelos que serão usados, aqui não há uma regra de dedo sobre os modelos base, fica a seu criterio, porém para o meta-estimador é usualmente aplicado boosting trees. Aqui escolhi arbitrariamente [kNN](https://scikit-learn.org/stable/modules/neighbors.html#nearest-neighbors-regression) e [ElasticNet](https://scikit-learn.org/stable/modules/linear_model.html#elastic-net), mas como meta-estimador usarei o [xgboost](https://xgboost.readthedocs.io/en/latest/tutorials/model.html).
+We now load cross-validation specifically into [KFold](https://scikit-learn.org/stable/modules/cross_validation.html#k-fold) so that we don't "lose" a lot of data, and the templates that will be used , here there is no rule of thumb about the base models, it is up to you, but for the meta-estimator is usually applied boosting trees. Here I arbitrarily chose [kNN](https://scikit-learn.org/stable/modules/neighbors.html#nearest-neighbors-regression) and [ElasticNet](https://scikit-learn.org/stable/modules/linear_model.html#elastic-net), but as a meta-estimator I will use [xgboost](https://xgboost.readthedocs.io/en/latest/tutorials/model.html).
 
 
 ```python
@@ -248,15 +247,15 @@ from sklearn.linear_model import ElasticNet
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.model_selection import KFold
 
-import xgboost as xgb
+from xgboost import XGBRFRegressor
 
 en = ElasticNet()
 knn = KNeighborsRegressor()
 # we will early stop to not overfit
-gbm = xgb.XGBRegressor(n_estimators=1000)
+gbm = XGBRFRegressor(n_jobs=-1, objective='reg:squarederror')
 ```
 
-Agora se inicia a criação dos atributos empilhados, para garantir que não tenha vieses e não fiquemos com poucos dados para treinar o meta-etimador os criamos por kfolds, sendo gerados os subconjuntos treino e teste, treinamos o modelo no conjunto de treino e predizemos o valor para o conjunto de teste, da seguinte forma:
+Now the creation of the stacked attributes begins, to make sure that there are no biases and we don't have little data to train the meta-estimator we create them by kfolds, being generated the training and test subsets, we train the model in the training set and we predict the value for the test set as follows:
 
 
 ```python
@@ -267,7 +266,7 @@ for train_index, test_index in kf.split(xtrain):
     xtrain.iloc[test_index,8] = en.predict(xtrain.iloc[test_index, :-1])
 ```
 
-Fazemos o mesmo para o outro modelo.
+We do the same for the other model.
 
 
 ```python
@@ -316,7 +315,7 @@ xtrain.head()
   </thead>
   <tbody>
     <tr>
-      <th>7061</th>
+      <td>7061</td>
       <td>4.1312</td>
       <td>35.0</td>
       <td>5.882353</td>
@@ -325,11 +324,11 @@ xtrain.head()
       <td>2.985294</td>
       <td>33.93</td>
       <td>-118.02</td>
-      <td>2.203225</td>
+      <td>2.208931</td>
       <td>2.108000</td>
     </tr>
     <tr>
-      <th>14689</th>
+      <td>14689</td>
       <td>2.8631</td>
       <td>20.0</td>
       <td>4.401210</td>
@@ -338,11 +337,11 @@ xtrain.head()
       <td>2.014113</td>
       <td>32.79</td>
       <td>-117.09</td>
-      <td>1.706363</td>
-      <td>1.973400</td>
+      <td>1.705684</td>
+      <td>1.809200</td>
     </tr>
     <tr>
-      <th>17323</th>
+      <td>17323</td>
       <td>4.2026</td>
       <td>24.0</td>
       <td>5.617544</td>
@@ -351,11 +350,11 @@ xtrain.head()
       <td>2.564912</td>
       <td>34.59</td>
       <td>-120.14</td>
-      <td>2.091721</td>
-      <td>2.197800</td>
+      <td>2.098392</td>
+      <td>1.683200</td>
     </tr>
     <tr>
-      <th>10056</th>
+      <td>10056</td>
       <td>3.1094</td>
       <td>14.0</td>
       <td>5.869565</td>
@@ -364,11 +363,11 @@ xtrain.head()
       <td>2.188406</td>
       <td>39.26</td>
       <td>-121.00</td>
-      <td>1.698103</td>
-      <td>2.160600</td>
+      <td>1.694140</td>
+      <td>1.792000</td>
     </tr>
     <tr>
-      <th>15750</th>
+      <td>15750</td>
       <td>3.3068</td>
       <td>52.0</td>
       <td>4.801205</td>
@@ -377,7 +376,7 @@ xtrain.head()
       <td>2.298193</td>
       <td>37.77</td>
       <td>-122.45</td>
-      <td>2.195922</td>
+      <td>2.194403</td>
       <td>2.388002</td>
     </tr>
   </tbody>
@@ -386,7 +385,7 @@ xtrain.head()
 
 
 
-Agora que criamos as features vamos avaliar os modelos nos dados brutos, sem as features empilhadas para verificar seus desempenhos:
+Now that we have created the features let's evaluate the models in the raw data without the stacked features to check their performances:
 
 
 ```python
@@ -400,11 +399,11 @@ ypred_knn = knn.predict(xtest)
 print(mean_squared_error(ytest, ypred_knn))
 ```
 
-    0.7562926012142394
+    0.7562926012142382
     1.136942049088978
 
 
-Agora criamos as features com os modelos treinados para os dados de teste:
+Now we create the features with the trained models for the test data:
 
 
 ```python
@@ -448,7 +447,7 @@ xtest.head()
   </thead>
   <tbody>
     <tr>
-      <th>20046</th>
+      <td>20046</td>
       <td>1.6812</td>
       <td>25.0</td>
       <td>4.192201</td>
@@ -461,7 +460,7 @@ xtest.head()
       <td>1.6230</td>
     </tr>
     <tr>
-      <th>3024</th>
+      <td>3024</td>
       <td>2.5313</td>
       <td>30.0</td>
       <td>5.039384</td>
@@ -474,7 +473,7 @@ xtest.head()
       <td>1.0822</td>
     </tr>
     <tr>
-      <th>15663</th>
+      <td>15663</td>
       <td>3.4801</td>
       <td>52.0</td>
       <td>3.977155</td>
@@ -487,7 +486,7 @@ xtest.head()
       <td>2.8924</td>
     </tr>
     <tr>
-      <th>20484</th>
+      <td>20484</td>
       <td>5.7376</td>
       <td>17.0</td>
       <td>6.163636</td>
@@ -500,7 +499,7 @@ xtest.head()
       <td>2.2456</td>
     </tr>
     <tr>
-      <th>9814</th>
+      <td>9814</td>
       <td>3.7250</td>
       <td>34.0</td>
       <td>5.492991</td>
@@ -518,35 +517,36 @@ xtest.head()
 
 
 
-Com os atributos empilhados em mãos agora treinamos dois modelos, um sem utiliza-los, para efeito de comparação e outro utilizando, vamos comparar os resultados:
+With the stacked attributes in hand now we train two models, one without using them, for comparison and another using, let's compare the results:
 
 
 ```python
 #Without stacked features
 gbm.fit(xtrain.iloc[:,:-2], ytrain.values,
         eval_set=[(xtest.iloc[:,:-2],ytest.values)],
-        early_stopping_rounds=10,
+        early_stopping_rounds=20,
         verbose=False)
 ypred = gbm.predict(xtest.iloc[:,:-2])
 print("Without stacked features", mean_squared_error(ytest, ypred))
-
 # With stacked features
 gbm.fit(xtrain, ytrain.values,
         eval_set=[(xtest,ytest.values)],
-        early_stopping_rounds=10,
+        early_stopping_rounds=20,
         verbose=False)
 ypred = gbm.predict(xtest)
 print("With stacked features", mean_squared_error(ytest, ypred))
 ```
 
-    Without stacked features 0.23318853095188977
-    With stacked features 0.22410766547017014
+    Without stacked features 0.5828429815199971
+    With stacked features 0.5359477372727965
 
 
-Nos tivemos uma melhora significativa usando atributos "empilhados", concluindo nosso meta-estimador aprende a melhor forma de combinar as features de outros estimadores, aprendendo seus erros de generalização e como os corrigir, garantindo uma generalização muito melhor.
+We've had a significant improvement using "stacked" attributes, concluding our meta estimator learns the best way to combine the features of other estimators, learning their generalization errors and how to correct them, ensuring a much better generalization.
 
 #### References
 
 [Stacked Generalization](http://machine-learning.martinsewell.com/ensembles/stacking/)
 
 [^1]: https://www.sciencedirect.com/science/article/pii/S0893608005800231
+
+[^2]: HASTIE, Trevor et al. The elements of statistical learning: data mining, inference and prediction. P. 252, 2005
