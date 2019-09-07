@@ -2,3 +2,4 @@
 _site/
 _cache/
 *.lock
+.ipybn_checkpoints/
