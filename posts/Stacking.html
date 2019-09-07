@@ -31,15 +31,15 @@
     
 </div>
 
-<p>Por ser uma tecnica relativamente nova, o “Stacked Generalization” ainda não tem uma tradução amplamente adotada, aqui proponho “empilhamento”, tradução literal para seu outro nome (stacking), como o termo para me referir a ela. Introduzida por Wolpert em 1992<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, essa tecnica de generalização consiste em combinar de formar não linear estimadores para corrigir seus vieses a um dado conjunto de treino, agregando suas capacidades para que se tenha uma melhor previsão.</p>
+<p>Introduced by Wolpert in 1992<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>, this generalization technique consists of combining nonlinear estimators to correct their biases to a given training set, adding their capabilities for better prediction<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
 <p><img src="../images/stacking.png" width="600px"></p>
-<p>Em uma <a href="../posts/Linear-Ensemble.html">postagem anterior</a> apresentei a combinação linear de estimadores, nela ajustamos <span class="math inline"><em>N</em></span> modelos a um conjunto de dados <span class="math inline"><em>D</em></span> e a priori definimos pesos <span class="math inline"><em>W</em></span> para eles combinando em um somatório:</p>
+<p>In a <a href="../posts/Linear-Ensemble.html">previous post</a> I presented the linear combination of estimators, in it we adjusted <span class="math inline"><em>N</em></span> models to a <span class="math inline"><em>D</em></span> dataset and a priori we defined <span class="math inline"><em>W</em></span> weights for them by combining into one summation:</p>
 <p><br /><span class="math display">$$\sum_{i=1}^{N} w_{i}M_{i}$$</span><br /></p>
 <p><br /><span class="math display">given a priori <em>W</em> = (<em>w</em><sub>1</sub>, <em>w</em><sub>2</sub>, ...<em>w</em><sub><em>N</em></sub>) and∑<em>W</em> = 1</span><br /></p>
-<p>com isso a media ponderada das predições no geral vão ser menos enviesadas para certas regiões e podem generalizar mais, porém este metodo apresenta duas limitações, os pesos não podem ser alterados depois de verificar o desempenho (se não estariamos agindo como um meta-estimador em cima dos dados de teste) e é uma combinação extremamente simples, não aproveitando bem os pontos fortes dos estimadores <span class="math inline"><em>M</em></span> para certas regiões.</p>
-<p>Wolpert então propõe uma alternativa a isso, e se tornasemos os pesos <span class="math inline"><em>W</em></span> em um problema de aprendizado? ou melhor, não só aprendessemos como combinar nossas predições mas também as combinassemos de forma não-linear usando um meta-estimador?</p>
-<p>Meta-estimadores são aqueles que usam modelos base para combina-los ou seleciona-los para melhorar em uma metrica de desempenho, por exemplo você leitor quando decide entre usar uma random-forest ou uma regressão logistica para prever o seu modelo você está sendo um meta-estimador. Porém aqui surge o problema de generalização, se continuar melhorando sua regressão ou rforest você poderá acabar dando overfitting aos dados e não conseguindo generalizar, aqui então é necessário aplicar tecnicas de validação cruzada para selecionar o modelo, o mesmo ocorrerá para o empilhamento.</p>
-<p>Para o empilhamento é ideal que o dataset seja relativamente grande, o conselho do autor é pelo menos mil registros. Começamos nosso exemplo carregando um dataset relativamente grande, 20mil registros, esse dataset tem como atributos caracteristicas de casas da california e como valor alvo o preço dela, os dados já estão normalizados e não iremos fazer qualquer alteração nele.</p>
+<p>With this the weighted average of the predictions in general will be less biased for certain regions and may generalize more, but this method has two limitations, the weights cannot be changed after verifying the performance (if we would not be acting as a meta-estimator in test data) and is an extremely simple combination, not leveraging the strengths of the <span class="math inline"><em>M</em></span> estimators for certain regions.</p>
+<p>Wolpert then proposes an alternative to this, what if we make <span class="math inline"><em>W</em></span> pesos a learning problem? or rather, not only learn how to combine our predictions but also combine them nonlinearly using a meta estimator?</p>
+<p>Meta estimators are those who use base models to combine them or select them to improve on a performance metric, for example you reader when deciding between using a random forest or a logistic regression to predict your model you are being a meta estimator. But here the problem of generalization arises, if you continue to improve your regression or rforest you may end up overfitting the data and not being able to generalize, here then it is necessary to apply cross validation techniques to select the model, the same will happen for the stacking.</p>
+<p>For stacking it is ideal that the dataset is relatively large, the author’s advice is at least one thousand records. We start our example by loading a relatively large dataset, 20,000 records, this dataset has as characteristic attributes of california houses and as a target value its price, the data is already normalized and we will not make any changes to it.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="im">from</span> sklearn.datasets <span class="im">import</span> fetch_california_housing</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="im">import</span> pandas <span class="im">as</span> pd</a>
@@ -98,9 +98,9 @@ Price
 </thead>
 <tbody>
 <tr>
-<th>
+<td>
 0
-</th>
+</td>
 <td>
 8.3252
 </td>
@@ -130,9 +130,9 @@ Price
 </td>
 </tr>
 <tr>
-<th>
+<td>
 1
-</th>
+</td>
 <td>
 8.3014
 </td>
@@ -162,9 +162,9 @@ Price
 </td>
 </tr>
 <tr>
-<th>
+<td>
 2
-</th>
+</td>
 <td>
 7.2574
 </td>
@@ -194,9 +194,9 @@ Price
 </td>
 </tr>
 <tr>
-<th>
+<td>
 3
-</th>
+</td>
 <td>
 5.6431
 </td>
@@ -226,9 +226,9 @@ Price
 </td>
 </tr>
 <tr>
-<th>
+<td>
 4
-</th>
+</td>
 <td>
 3.8462
 </td>
@@ -260,7 +260,7 @@ Price
 </tbody>
 </table>
 </div>
-<p>Aqui separamos em treino e teste de forma (pseudo)aleatorizada para no final avaliarmos o desempenho.</p>
+<p>Here we separate into training and testing in a (pseudo) random way to finally evaluate performance.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1">xtrain, xtest, ytrain, ytest <span class="op">=\</span></a>
 <a class="sourceLine" id="cb2-2" title="2">    train_test_split(df.drop(<span class="st">'Price'</span>, axis<span class="op">=</span><span class="dv">1</span>), df.Price, test_size<span class="op">=</span>.<span class="dv">3</span>,</a>
 <a class="sourceLine" id="cb2-3" title="3">                     random_state<span class="op">=</span><span class="dv">42</span>)</a>
@@ -312,9 +312,9 @@ Longitude
 </thead>
 <tbody>
 <tr>
-<th>
+<td>
 7061
-</th>
+</td>
 <td>
 4.1312
 </td>
@@ -341,9 +341,9 @@ Longitude
 </td>
 </tr>
 <tr>
-<th>
+<td>
 14689
-</th>
+</td>
 <td>
 2.8631
 </td>
@@ -370,9 +370,9 @@ Longitude
 </td>
 </tr>
 <tr>
-<th>
+<td>
 17323
-</th>
+</td>
 <td>
 4.2026
 </td>
@@ -399,9 +399,9 @@ Longitude
 </td>
 </tr>
 <tr>
-<th>
+<td>
 10056
-</th>
+</td>
 <td>
 3.1094
 </td>
@@ -428,9 +428,9 @@ Longitude
 </td>
 </tr>
 <tr>
-<th>
+<td>
 15750
-</th>
+</td>
 <td>
 3.3068
 </td>
@@ -459,24 +459,24 @@ Longitude
 </tbody>
 </table>
 </div>
-<p>Agora carregamos a validação-cruzada especificamente a <a href="https://scikit-learn.org/stable/modules/cross_validation.html#k-fold">KFold</a>, para que não “percamos” muitos dados, e os modelos que serão usados, aqui não há uma regra de dedo sobre os modelos base, fica a seu criterio, porém para o meta-estimador é usualmente aplicado boosting trees. Aqui escolhi arbitrariamente <a href="https://scikit-learn.org/stable/modules/neighbors.html#nearest-neighbors-regression">kNN</a> e <a href="https://scikit-learn.org/stable/modules/linear_model.html#elastic-net">ElasticNet</a>, mas como meta-estimador usarei o <a href="https://xgboost.readthedocs.io/en/latest/tutorials/model.html">xgboost</a>.</p>
+<p>We now load cross-validation specifically into <a href="https://scikit-learn.org/stable/modules/cross_validation.html#k-fold">KFold</a> so that we don’t “lose” a lot of data, and the templates that will be used , here there is no rule of thumb about the base models, it is up to you, but for the meta-estimator is usually applied boosting trees. Here I arbitrarily chose <a href="https://scikit-learn.org/stable/modules/neighbors.html#nearest-neighbors-regression">kNN</a> and <a href="https://scikit-learn.org/stable/modules/linear_model.html#elastic-net">ElasticNet</a>, but as a meta-estimator I will use <a href="https://xgboost.readthedocs.io/en/latest/tutorials/model.html">xgboost</a>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb3-1" title="1"><span class="im">from</span> sklearn.linear_model <span class="im">import</span> ElasticNet</a>
 <a class="sourceLine" id="cb3-2" title="2"><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KNeighborsRegressor</a>
 <a class="sourceLine" id="cb3-3" title="3"><span class="im">from</span> sklearn.model_selection <span class="im">import</span> KFold</a>
 <a class="sourceLine" id="cb3-4" title="4"></a>
-<a class="sourceLine" id="cb3-5" title="5"><span class="im">import</span> xgboost <span class="im">as</span> xgb</a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="im">from</span> xgboost <span class="im">import</span> XGBRFRegressor</a>
 <a class="sourceLine" id="cb3-6" title="6"></a>
 <a class="sourceLine" id="cb3-7" title="7">en <span class="op">=</span> ElasticNet()</a>
 <a class="sourceLine" id="cb3-8" title="8">knn <span class="op">=</span> KNeighborsRegressor()</a>
 <a class="sourceLine" id="cb3-9" title="9"><span class="co"># we will early stop to not overfit</span></a>
-<a class="sourceLine" id="cb3-10" title="10">gbm <span class="op">=</span> xgb.XGBRegressor(n_estimators<span class="op">=</span><span class="dv">1000</span>)</a></code></pre></div>
-<p>Agora se inicia a criação dos atributos empilhados, para garantir que não tenha vieses e não fiquemos com poucos dados para treinar o meta-etimador os criamos por kfolds, sendo gerados os subconjuntos treino e teste, treinamos o modelo no conjunto de treino e predizemos o valor para o conjunto de teste, da seguinte forma:</p>
+<a class="sourceLine" id="cb3-10" title="10">gbm <span class="op">=</span> XGBRFRegressor(n_jobs<span class="op">=-</span><span class="dv">1</span>, objective<span class="op">=</span><span class="st">'reg:squarederror'</span>)</a></code></pre></div>
+<p>Now the creation of the stacked attributes begins, to make sure that there are no biases and we don’t have little data to train the meta-estimator we create them by kfolds, being generated the training and test subsets, we train the model in the training set and we predict the value for the test set as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" title="1">kf <span class="op">=</span> KFold(<span class="dv">20</span>, shuffle<span class="op">=</span><span class="va">True</span>)</a>
 <a class="sourceLine" id="cb4-2" title="2">xtrain[<span class="st">'en'</span>] <span class="op">=</span> <span class="dv">0</span></a>
 <a class="sourceLine" id="cb4-3" title="3"><span class="cf">for</span> train_index, test_index <span class="kw">in</span> kf.split(xtrain):</a>
 <a class="sourceLine" id="cb4-4" title="4">    en.fit(xtrain.iloc[train_index, :<span class="op">-</span><span class="dv">1</span>], ytrain.iloc[train_index])</a>
 <a class="sourceLine" id="cb4-5" title="5">    xtrain.iloc[test_index,<span class="dv">8</span>] <span class="op">=</span> en.predict(xtrain.iloc[test_index, :<span class="op">-</span><span class="dv">1</span>])</a></code></pre></div>
-<p>Fazemos o mesmo para o outro modelo.</p>
+<p>We do the same for the other model.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb5-1" title="1">kf <span class="op">=</span> KFold(<span class="dv">20</span>, shuffle<span class="op">=</span><span class="va">True</span>)</a>
 <a class="sourceLine" id="cb5-2" title="2">xtrain[<span class="st">'knn'</span>] <span class="op">=</span> <span class="dv">0</span></a>
 <a class="sourceLine" id="cb5-3" title="3"></a>
@@ -538,9 +538,9 @@ knn
 </thead>
 <tbody>
 <tr>
-<th>
+<td>
 7061
-</th>
+</td>
 <td>
 4.1312
 </td>
@@ -566,16 +566,16 @@ knn
 -118.02
 </td>
 <td>
-2.203225
+2.208931
 </td>
 <td>
 2.108000
 </td>
 </tr>
 <tr>
-<th>
+<td>
 14689
-</th>
+</td>
 <td>
 2.8631
 </td>
@@ -601,16 +601,16 @@ knn
 -117.09
 </td>
 <td>
-1.706363
+1.705684
 </td>
 <td>
-1.973400
+1.809200
 </td>
 </tr>
 <tr>
-<th>
+<td>
 17323
-</th>
+</td>
 <td>
 4.2026
 </td>
@@ -636,16 +636,16 @@ knn
 -120.14
 </td>
 <td>
-2.091721
+2.098392
 </td>
 <td>
-2.197800
+1.683200
 </td>
 </tr>
 <tr>
-<th>
+<td>
 10056
-</th>
+</td>
 <td>
 3.1094
 </td>
@@ -671,16 +671,16 @@ knn
 -121.00
 </td>
 <td>
-1.698103
+1.694140
 </td>
 <td>
-2.160600
+1.792000
 </td>
 </tr>
 <tr>
-<th>
+<td>
 15750
-</th>
+</td>
 <td>
 3.3068
 </td>
@@ -706,7 +706,7 @@ knn
 -122.45
 </td>
 <td>
-2.195922
+2.194403
 </td>
 <td>
 2.388002
@@ -715,7 +715,7 @@ knn
 </tbody>
 </table>
 </div>
-<p>Agora que criamos as features vamos avaliar os modelos nos dados brutos, sem as features empilhadas para verificar seus desempenhos:</p>
+<p>Now that we have created the features let’s evaluate the models in the raw data without the stacked features to check their performances:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb6-1" title="1"><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</a>
 <a class="sourceLine" id="cb6-2" title="2">en.fit(xtrain.iloc[:,:<span class="op">-</span><span class="dv">2</span>], ytrain)</a>
 <a class="sourceLine" id="cb6-3" title="3">ypred_en <span class="op">=</span> en.predict(xtest)</a>
@@ -724,8 +724,8 @@ knn
 <a class="sourceLine" id="cb6-6" title="6">knn.fit(xtrain.iloc[:,:<span class="op">-</span><span class="dv">2</span>], ytrain)</a>
 <a class="sourceLine" id="cb6-7" title="7">ypred_knn <span class="op">=</span> knn.predict(xtest)</a>
 <a class="sourceLine" id="cb6-8" title="8"><span class="bu">print</span>(mean_squared_error(ytest, ypred_knn))</a></code></pre></div>
-<p>0.7562926012142394 1.136942049088978</p>
-<p>Agora criamos as features com os modelos treinados para os dados de teste:</p>
+<p>0.7562926012142382 1.136942049088978</p>
+<p>Now we create the features with the trained models for the test data:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb7-1" title="1">xtest[<span class="st">'en'</span>] <span class="op">=</span> ypred_en</a>
 <a class="sourceLine" id="cb7-2" title="2">xtest[<span class="st">'knn'</span>] <span class="op">=</span> ypred_knn</a>
 <a class="sourceLine" id="cb7-3" title="3">xtest.head()</a></code></pre></div>
@@ -782,9 +782,9 @@ knn
 </thead>
 <tbody>
 <tr>
-<th>
+<td>
 20046
-</th>
+</td>
 <td>
 1.6812
 </td>
@@ -817,9 +817,9 @@ knn
 </td>
 </tr>
 <tr>
-<th>
+<td>
 3024
-</th>
+</td>
 <td>
 2.5313
 </td>
@@ -852,9 +852,9 @@ knn
 </td>
 </tr>
 <tr>
-<th>
+<td>
 15663
-</th>
+</td>
 <td>
 3.4801
 </td>
@@ -887,9 +887,9 @@ knn
 </td>
 </tr>
 <tr>
-<th>
+<td>
 20484
-</th>
+</td>
 <td>
 5.7376
 </td>
@@ -922,9 +922,9 @@ knn
 </td>
 </tr>
 <tr>
-<th>
+<td>
 9814
-</th>
+</td>
 <td>
 3.7250
 </td>
@@ -959,30 +959,30 @@ knn
 </tbody>
 </table>
 </div>
-<p>Com os atributos empilhados em mãos agora treinamos dois modelos, um sem utiliza-los, para efeito de comparação e outro utilizando, vamos comparar os resultados:</p>
+<p>With the stacked attributes in hand now we train two models, one without using them, for comparison and another using, let’s compare the results:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb8-1" title="1"><span class="co">#Without stacked features</span></a>
 <a class="sourceLine" id="cb8-2" title="2">gbm.fit(xtrain.iloc[:,:<span class="op">-</span><span class="dv">2</span>], ytrain.values,</a>
 <a class="sourceLine" id="cb8-3" title="3">        eval_set<span class="op">=</span>[(xtest.iloc[:,:<span class="op">-</span><span class="dv">2</span>],ytest.values)],</a>
-<a class="sourceLine" id="cb8-4" title="4">        early_stopping_rounds<span class="op">=</span><span class="dv">10</span>,</a>
+<a class="sourceLine" id="cb8-4" title="4">        early_stopping_rounds<span class="op">=</span><span class="dv">20</span>,</a>
 <a class="sourceLine" id="cb8-5" title="5">        verbose<span class="op">=</span><span class="va">False</span>)</a>
 <a class="sourceLine" id="cb8-6" title="6">ypred <span class="op">=</span> gbm.predict(xtest.iloc[:,:<span class="op">-</span><span class="dv">2</span>])</a>
 <a class="sourceLine" id="cb8-7" title="7"><span class="bu">print</span>(<span class="st">&quot;Without stacked features&quot;</span>, mean_squared_error(ytest, ypred))</a>
-<a class="sourceLine" id="cb8-8" title="8"></a>
-<a class="sourceLine" id="cb8-9" title="9"><span class="co"># With stacked features</span></a>
-<a class="sourceLine" id="cb8-10" title="10">gbm.fit(xtrain, ytrain.values,</a>
-<a class="sourceLine" id="cb8-11" title="11">        eval_set<span class="op">=</span>[(xtest,ytest.values)],</a>
-<a class="sourceLine" id="cb8-12" title="12">        early_stopping_rounds<span class="op">=</span><span class="dv">10</span>,</a>
-<a class="sourceLine" id="cb8-13" title="13">        verbose<span class="op">=</span><span class="va">False</span>)</a>
-<a class="sourceLine" id="cb8-14" title="14">ypred <span class="op">=</span> gbm.predict(xtest)</a>
-<a class="sourceLine" id="cb8-15" title="15"><span class="bu">print</span>(<span class="st">&quot;With stacked features&quot;</span>, mean_squared_error(ytest, ypred))</a></code></pre></div>
-<p>Without stacked features 0.23318853095188977 With stacked features 0.22410766547017014</p>
-<p>Nos tivemos uma melhora significativa usando atributos “empilhados”, concluindo nosso meta-estimador aprende a melhor forma de combinar as features de outros estimadores, aprendendo seus erros de generalização e como os corrigir, garantindo uma generalização muito melhor.</p>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co"># With stacked features</span></a>
+<a class="sourceLine" id="cb8-9" title="9">gbm.fit(xtrain, ytrain.values,</a>
+<a class="sourceLine" id="cb8-10" title="10">        eval_set<span class="op">=</span>[(xtest,ytest.values)],</a>
+<a class="sourceLine" id="cb8-11" title="11">        early_stopping_rounds<span class="op">=</span><span class="dv">20</span>,</a>
+<a class="sourceLine" id="cb8-12" title="12">        verbose<span class="op">=</span><span class="va">False</span>)</a>
+<a class="sourceLine" id="cb8-13" title="13">ypred <span class="op">=</span> gbm.predict(xtest)</a>
+<a class="sourceLine" id="cb8-14" title="14"><span class="bu">print</span>(<span class="st">&quot;With stacked features&quot;</span>, mean_squared_error(ytest, ypred))</a></code></pre></div>
+<p>Without stacked features 0.5828429815199971 With stacked features 0.5359477372727965</p>
+<p>We’ve had a significant improvement using “stacked” attributes, concluding our meta estimator learns the best way to combine the features of other estimators, learning their generalization errors and how to correct them, ensuring a much better generalization.</p>
 <h4 id="references">References</h4>
 <p><a href="http://machine-learning.martinsewell.com/ensembles/stacking/">Stacked Generalization</a></p>
 <section class="footnotes">
 <hr />
 <ol>
 <li id="fn1"><p>https://www.sciencedirect.com/science/article/pii/S0893608005800231<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>HASTIE, Trevor et al. The elements of statistical learning: data mining, inference and prediction. P. 252, 2005<a href="#fnref2" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
 
