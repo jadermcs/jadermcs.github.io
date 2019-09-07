@@ -3,7 +3,7 @@ body {
     margin: 0px auto 0px auto;
     width: 600px;
     font-family:'IBM Plex Mono', monospace;
-    color:#222831 
+    color:#222831
 }
 div#header {
     border-bottom: 2px solid #222831;
@@ -54,66 +54,65 @@ pre.sourceCode{
     border:1px solid #000;
     padding:6px 10px;
     overflow-x:auto;
-    font-size:14px 
+    font-size:14px
 }
 table.sourceCode,tr.sourceCode,td.lineNumbers,td.sourceCode,table.sourceCode pre{
     margin:0;
     padding:0;
     border:0;
     vertical-align:baseline;
-    border:none 
+    border:none
 }
 td.lineNumbers{
     border-right:1px solid #AAAAAA;
-    text-align:right;
     color:#AAAAAA;
     padding-right:5px;
-    padding-left:5px 
+    padding-left:5px
 }
 td.sourceCode{
-    padding-left:5px 
+    padding-left:5px
 }
 .sourceCode span.kw, span.im, span.cf{
     color:#353535;
-    font-weight:bold 
+    font-weight:bold
 }
 .sourceCode span.dt{
-    color:#902000 
+    color:#902000
 }
 .sourceCode span.dv{
-    color:#40a070 
+    color:#40a070
 }
 .sourceCode span.bn{
-    color:#40a070 
+    color:#40a070
 }
 .sourceCode span.fl{
-    color:#40a070 
+    color:#40a070
 }
 .sourceCode span.ch{
-    color:#4070a0 
+    color:#4070a0
 }
 .sourceCode span.st{
-    color:#4070a0 
+    color:#4070a0
 }
 .sourceCode span.co{
     color:#60a0b0;
-    font-style:italic 
+    font-style:italic
 }
 .sourceCode span.ot{
-    color:#007020 
+    color:#007020
 }
 .sourceCode span.al{
     color:red;
-    font-weight:bold 
+    font-weight:bold
 }
 .sourceCode span.fu{
-    color:#06287e 
+    color:#06287e
 }
 .sourceCode span.re{
 }
 .sourceCode span.er{
     color:red;
-    font-weight:bold 
+    font-weight:bold
 }
 /*table config*/
 .scrolltable {
@@ -170,6 +169,7 @@ th, td {
 th {
     background-color: lightgrey;
     border-width: 1px;
+    text-align: left !important;
 }
 tr:first-child td {
     border-top-width: 0;
