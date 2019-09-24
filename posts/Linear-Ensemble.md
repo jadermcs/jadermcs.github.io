@@ -5,15 +5,16 @@ tags: [regressão, modelos-compostos]
 author: Jader Martins
 ---
 
-# Modelos Regressivos Compostos para Estimativas de Preço
+# Linear Ensemble of Regressors for Price Estimates
 
-Determinar preços de determinados itens antes de sua entrada no mercado é essencial para boa aceitação e consumo. Disponibilizar um produto no mercado abaixo do preço de mercado não te gera bons retornos, mas também um valor muito alto não agrada aos compradores, modelos regressivos nesse caso são de grande ajuda para a tomada de decisão acerca da precificação de um insumo. A performance preditiva de modelos compostos comparados a modelos simples tem sido notável nas mais diversas áreas[^1], modelos simples são aqueles que usam [algoritmos puros do aprendizado de máquina](https://pt.wikipedia.org/wiki/Aprendizado_de_m%C3%A1quina#Abordagens), já modelos compostos combinam as predições de dois ou mais algoritmos na tentativa de melhorar a predição. Nessa postagem buscarei apresentar formas eficientes de combinar modelos para minimizar o erro das predições de preços de metro quadrado de imóveis em Boston.
+Pricing certain items before they enter the market is essential for good acceptance and consumption. Making a product available at the market below the market price does not give you good returns, but also a very high value does not appeal to buyers, regressive models in this case are of great help in making the decision about the pricing of an input. The predictive performance of composite models compared to simple models has been remarkable in many areas [^1], simple models are those that use [pure machine learning algorithms](https://en.wikipedia.org/wiki/Machine_learning#Models), whereas composite models combine the predictions of two or more algorithms in an attempt to improve the prediction. In this post I will try to present efficient ways to combine models to minimize the error of Boston's square-meter property price predictions.
 
-### Preparando os Dados
-Aqui usarei um dataset famoso de preços de casa, mas a técnica aqui abordada pode ser estendida para precificação de quase qualquer coisa. Primeiro importarei e carregarei meu conjunto de dados na variável “boston” utilizando o Pandas, modulo do Python famoso por seus dataframes voltado a analise em finanças. O conjunto de dados advém do módulo Scikit-Learn que usaremos no decorrer desse post para trabalhar com AM, ele forneça ferramentas desde o tratamento dos dados até uma _pipeline_ de aprendizado de máquina. Também usaremos o modulo Numpy.
+### Preparing the Data
+Here I will use a famous house price dataset, but the technique discussed here can be extended to pricing almost anything. First I will import and load my dataset into the “boston” variable using Pandas, the Python module famous for its data analysis focused on finance. The dataset comes from the Scikit-Learn module that we will use throughout this post to work with AM, it provides tools from data handling to a machine learning _pipeline_. We will also use the Numpy module.
 
 
 ```python
+%config InlineBackend.figure_formats = ['svg']
 %matplotlib inline
 
 from sklearn.datasets import load_boston
@@ -23,7 +24,7 @@ import pandas as pd
 boston = load_boston()
 
 df = pd.DataFrame(
-    np.column_stack([boston.data, boston.target]), 
+    np.column_stack([boston.data, boston.target]),
     columns=np.r_[boston.feature_names, ['MEDV']])
 df.head()
 ```
@@ -32,17 +33,17 @@ df.head()
 
 
 <div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
     }
 
     .dataframe tbody tr th {
         vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
     }
 </style>
 <table border="1" class="dataframe">
@@ -67,7 +68,7 @@ df.head()
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
+      <td>0</td>
       <td>0.00632</td>
       <td>18.0</td>
       <td>2.31</td>
@@ -84,7 +85,7 @@ df.head()
       <td>24.0</td>
     </tr>
     <tr>
-      <th>1</th>
+      <td>1</td>
       <td>0.02731</td>
       <td>0.0</td>
       <td>7.07</td>
@@ -101,7 +102,7 @@ df.head()
       <td>21.6</td>
     </tr>
     <tr>
-      <th>2</th>
+      <td>2</td>
       <td>0.02729</td>
       <td>0.0</td>
       <td>7.07</td>
@@ -118,7 +119,7 @@ df.head()
       <td>34.7</td>
     </tr>
     <tr>
-      <th>3</th>
+      <td>3</td>
       <td>0.03237</td>
       <td>0.0</td>
       <td>2.18</td>
@@ -135,7 +136,7 @@ df.head()
       <td>33.4</td>
     </tr>
     <tr>
-      <th>4</th>
+      <td>4</td>
       <td>0.06905</td>
       <td>0.0</td>
       <td>2.18</td>
@@ -157,10 +158,10 @@ df.head()
 
 
 
-Aqui carrego meus dados na variável df e mostro as 5 primeiras linhas com o comando head.
+Here I load my data into the *df* variable and show the first 5 lines with the head command.
 
-Temos informações como criminalidade da região, idade média da população, etc..
-Embora não seja o foco dessa postagem, a distribuição dos nossos dados poderá causar grande dificuldade para nosso regressor modela-la, sendo assim aplicarei uma "feature engineering" simples para tornar nossa distribuição mais normal, em posts futuros será explicado em detalhes o que é feature engineering e como utiliza-la para melhorar suas predições. Primeiro vamos ver como está a distribuição que queremos prever ao lado da distribuição "normalizada" por f.log(x+1), (acrescentar um ao valor nos evita ter problemas com zeros).
+We have information like crime of the region, average age of the population, etc ..
+Although it is not the focus of this post, the distribution of our data may cause our regressor to make it very difficult, so I will apply a simple feature engineering to make our distribution more normal, in future posts will be explained in detail what is feature engineering and how to use it to improve your predictions. First let's see how the distribution we want to predict next to the "normalized" distribution by $log (x + 1)$, (adding one to the value avoids us having problems with zeros).
 
 
 ```python
@@ -171,26 +172,28 @@ sns.set(style="whitegrid", palette="coolwarm")
 
 
 ```python
-df.plot.box(figsize=(12,6), patch_artist=True)
+df.plot.box(figsize=(10,3), patch_artist=True);
 ```
 
-<img src="/images/output_6_1.png" width=600px>
+
+<img src="/images/output_5_0.svg" width=600px>
 
 
-Primeiro carrego as bibliotecas de gráfico que utilizarei no decorrer do texto, defino configurações como estilo e paleta de cores para o gráfico, em seguida monto um dataframe _prices_ para receber duas colunas de valores, uma com o preço sem transformação, outra com o preço tranformado pela função log1p (f.log(x+1)).
+First I load the chart libraries that I will use throughout the text, set the style and color palette for the chart, then set up a _prices_ dataframe to receive two columns of values, one with the price without transformation, the other with the transformed price by log1p ($ log (x + 1) $) function.
 
 
 ```python
-prices = pd.DataFrame({"Preço":df["MEDV"], "log(Preço + 1)":np.log1p(df["MEDV"])})
+prices = pd.DataFrame({"Price":df["MEDV"], "log(Price + 1)":np.log1p(df["MEDV"])})
 
-prices.hist(color="#F1684E", bins=50)
-plt.ylabel("Quantidade")
+prices.hist(color="#F1684E", bins=50, figsize=(10,3))
+plt.ylabel("Amount");
 ```
 
-<img src="/images/output_8_1.png">
+
+<img src="/images/output_7_0.svg" width=600px>
 
 
-Podemos ver que nossa distribuição ficou menos espaçada e um pouco mais próxima de uma distribuição normal, mas o Python conta com uma função estatística que nos ajuda avaliar se isso será necessário ou não, através do teste de Box-Cox que terá indícios com o grau de Obliquidade (Skewness).
+We can see that our distribution has been less spaced and a little closer to a normal distribution, but Python has a statistical function that helps us evaluate whether this will be necessary or not, through the Box-Cox test that will have clues with the degree of skewness.
 
 
 ```python
@@ -202,7 +205,7 @@ for col in df.keys():
         print(col, sk)
 ```
 
-    CRIM 5.222039072246122
+    CRIM 5.207652387859715
     ZN 2.219063057148425
     CHAS 3.395799292642519
     DIS 1.0087787565152246
@@ -219,12 +222,13 @@ O teste de Box-Cox[^5] nos diz que um skew acima de 0.75 pode ser linearizado pe
 dfnorm = (df - df.mean()) / (df.std())
 for x in ["CRIM", "ZN", "CHAS","MEDV"]:
     sns.kdeplot(dfnorm[x])
-plt.title("Distribuição Valor Médio")
-plt.xlabel("Preço")
-plt.ylabel("Quantidade")
+plt.title("Distrution Mean Value")
+plt.xlabel("Price")
+plt.ylabel("Amount");
 ```
 
-<img src="/images/output_12_1.png">
+
+<img src="/images/output_11_0.svg" width=600px>
 
 
 
@@ -240,12 +244,13 @@ for col in df.keys():
 dfnorm = (df - df.mean()) / (df.std())
 for x in ["CRIM", "ZN", "CHAS","MEDV"]:
     sns.kdeplot(dfnorm[x])
-plt.title("Distribuição Valor Médio")
-plt.xlabel("Preço")
-plt.ylabel("Quantidade")
+plt.title("Distribution Mean Value")
+plt.xlabel("Price")
+plt.ylabel("Amount");
 ```
 
-<img src="/images/output_14_1.png">
+
+<img src="/images/output_13_0.svg" width=600px>
 
 
 Vemos que as distribuições ficaram muito mais centradas e tendendo a distribuição gaussiana[^2], o que será excelente para o ajuste dos nossos estimadores[^3]. Sendo a função logarítmica e a função f.x+1 bijetoras, poderemos retornar ao nosso valor original assim que acabarmos o ajuste do modelo.
@@ -263,7 +268,7 @@ df.std()
 
 
 
-    CRIM         1.020192
+    CRIM         1.022731
     ZN           1.620831
     INDUS        6.860353
     CHAS         0.176055
@@ -281,11 +286,11 @@ df.std()
 
 
 
-É visível que algumas variáveis estão extremamente dispersas, podemos mudar isso com a seguinte formula 
+It is visible that some variables are extremely dispersed, we can change this with the following formula:
 
 $$ z_i=\frac{x_i-\min(x)}{\max(x)-\min(x)} $$
 
-Assim nossas variáveis estarão entre zero e um, ficando mais simplificada a predição.
+Thus our variables will be between zero and one, making the prediction simpler.
 
 
 ```python
@@ -297,7 +302,7 @@ df.std()
 
 
 
-    CRIM       0.227050
+    CRIM       0.227615
     ZN         0.351200
     INDUS      0.251479
     CHAS       0.253994
@@ -315,23 +320,24 @@ df.std()
 
 
 
-Excelente!!
+Great!!
 
-#### Tudo Pronto
+#### All ready
 
-Finalizado nosso ajuste nos dados após tanto trabalho vamos agora para o ajuste dos nossos modelos, acostume-se, tratar os dados é o que lhe consumirá mais tempo em um processo de aprendizado de máquina. Mas por fim vamos dar uma olhada final em como eles ficaram distribuídos. Usarei a função interna do Pandas, boxplot, se tem dúvida do que esse gráfico representa, veja [aqui](https://pt.wikipedia.org/wiki/Diagrama_de_caixa).
+Finished our data tuning after so much work we are now going to adjust our models, get used to it, handling the data is what will consume you most time in a machine learning process. But finally let's take a final look at how they got distributed. I will use the internal function of Pandas, boxplot, if you have any doubt what this chart represents, see [here](https://en.wikipedia.org/wiki/Box_plot).
 
 
 ```python
-df.plot.box(figsize=(12,6), patch_artist=True)
+df.plot.box(figsize=(10,3), patch_artist=True);
 ```
 
-<img src="/images/output_20_1.png" width=600px>
+
+<img src="/images/output_19_0.svg" width=600px>
 
 
-Como já discutido em outras postagens, devemos separar os dados em um conjunto de treino e teste, para treinar nosso modelo e para saber quão bem nosso modelo irá prever para casos desconhecidos. Leia [essa publicação](/2017/04/29/Um-Olhar-Descontraido-Sobre-o-Dilema-Vies-Variancia/) para entender melhor.
+As already discussed in other posts, we should separate the data into a training and testing set, to train our model and to know how well our model will predict for unknown cases. Read [this article](https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff) for a better understanding.
 
-Aqui usamos a função interna do Scikit-Learn para separar os dados, para informações adicionais sobre todas as variáveis das funções abaixo sugiro consultar a [documentação oficial](http://scikit-learn.org/stable/documentation.html). Como primeiro argumento passo meu X, atributos, e segundo argumento meu y, valor que eu desejo prever, por fim passo um inteiro para tornar meus resultados reprodutíveis, tornando os processos aleatórios das funções não-aleatórios.
+Here we use Scikit-Learn's built-in function to separate data, for additional information on all of the function variables below I suggest consulting the [official documentation](http://scikit-learn.org/stable/documentation.html). As the first argument I pass my X, attributes, and the second argument my y, the value I want to predict, finally I pass an integer to make my results reproducible by making the random processes of functions nonrandom.
 
 
 ```python
@@ -340,26 +346,24 @@ xtrain, xtest, ytrain, ytest =\
     train_test_split(df.drop('MEDV',1).values, df['MEDV'].values, random_state=201)
 ```
 
-Agora importaremos nossos dois modelos, o primeiro é o XGBoost, algoritmo que vem se demonstrando extremamente eficiente em competições e o Ridge famoso algoritmo regressor. Iremos avaliar nossos modelos pelo [erro médio quadrático](https://pt.wikipedia.org/wiki/Erro_quadr%C3%A1tico_m%C3%A9dio).
+Now we will import our two models, the first one being XGBoost, an algorithm that has been proving extremely efficient in competitions and the famous Ridge regression algorithm. We will evaluate our models by [square mean error](https://en.wikipedia.org/wiki/Mean_squared_error).
 
 
 ```python
-import xgboost as xgb
+from lightgbm import LGBMRegressor
 from sklearn.linear_model import Ridge
-
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import GridSearchCV
 ```
 
-Aqui executo uma pequena melhoria nos hiperparametros com o GridSearchCV para buscar a combinação dos hiperparametros que me dará uma melhor predição, em seguida ajusto meu modelo aos dados e tendo ele treinando, prevejo para dados que ele desconhece, em seguida avalio o desempenho do modelo como dito.
+Here I perform a slight improvement on the hyperparameters with GridSearchCV to look for the combination of the hyperparameters that will give me a better prediction, then I adjust my model to the data and having it train, I predict data it doesn't know, then evaluate the model performance as said.
 
 
 ```python
-from sklearn.model_selection import GridSearchCV
-
 params = {'alpha': np.linspace(0.1,1,200),
           'random_state':[2020]}
 
-model1 = GridSearchCV(estimator = Ridge(), param_grid = params)
+model1 = GridSearchCV(estimator = Ridge(), param_grid = params, cv=5)
 model1.fit(xtrain,ytrain)
 linpred = model1.predict(xtest)
 
@@ -367,7 +371,7 @@ err1 = mean_squared_error(linpred, ytest)
 print(err1)
 ```
 
-    0.00736161092505
+    0.00745856883004946
 
 
 
@@ -376,52 +380,52 @@ params = {'reg_alpha': np.linspace(0,1,10),
           'gamma': np.linspace(0,1,1),
           'reg_lambda': np.linspace(0,1,1)}
 
-model2 = GridSearchCV(estimator = xgb.XGBRegressor(), param_grid = params)
+model2 = GridSearchCV(estimator = LGBMRegressor(), param_grid = params, cv=5)
 model2.fit(xtrain, ytrain)
-xgbpred = model2.predict(xtest)
+lgbmpred = model2.predict(xtest)
 
-err2 = mean_squared_error(xgbpred, ytest)
+err2 = mean_squared_error(lgbmpred, ytest)
 print(err2)
 ```
 
-    0.00526337776169
+    0.005040440132637956
 
 
-Resultados muito bons, mas será que podemos deixá-los ainda melhor?!
-Vamos analisar se as nossas predições têm baixa correlação.
+Very good results, but can we make them even better?! Let's look at whether our predictions have a low correlation.
 
 
 ```python
-predictions = pd.DataFrame({"XGBoost":np.expm1(xgbpred), "Ridge":np.expm1(linpred)})
-predictions.plot(x = "XGBoost", y = "Ridge", kind = "scatter", color="#85C8DD")
+predictions = pd.DataFrame({"LightGBM":np.expm1(lgbmpred), "Ridge":np.expm1(linpred)})
+predictions.plot(x = "LightGBM", y = "Ridge", kind = "scatter", color="#85C8DD");
 ```
 
-<img src="/images/output_30_1.png">
+
+<img src="/images/output_28_0.svg" width=600px>
 
 
-Como já explicado, uma baixa correlação tende a melhorar significativamente nossa predição, visualmente temos algo significante, vamos olhar agora isso em números
+As already explained, a low correlation tends to significantly improve our prediction, visually we have something significant, let's look at that now in numbers.
 
 
 ```python
 from scipy import stats
-_, _, r_value, _, std_err = stats.linregress(np.expm1(xgbpred),np.expm1(linpred))
+_, _, r_value, _, std_err = stats.linregress(np.expm1(lgbmpred),np.expm1(linpred))
 print(r_value, std_err)
 ```
 
-    0.923252641379 0.0321275120299
+    0.9193021766109413 0.03313351573076193
 
 
-Devido nosso r-valor não ser muito alto (<.98), podemos nos beneficiar da combinação das estimativas. Chegamos a parte da motivação inicial combinar os modelos para aumentar o desempenho preditivo. Testarei 3 combinações das predições, média ponderada, media simples e média harmônica.
+Because our r-value is not too high (<.95), we can benefit from the combination of estimates. We get to the initial motivation part of combining models to increase predictive performance. I will test 3 combinations of predictions, weighted mean, simple mean, and harmonic mean.
 
 
 ```python
-err3 = mean_squared_error(xgbpred * 0.8 + linpred * 0.2, ytest) # media ponderada
-err4 = mean_squared_error((xgbpred + linpred)/2, ytest) # media simples
-err5 = mean_squared_error(stats.hmean([xgbpred, linpred]), ytest)# media harmonica
+err3 = mean_squared_error(lgbmpred * 0.8 + linpred * 0.2, ytest) # weighted mean
+err4 = mean_squared_error((lgbmpred + linpred)/2, ytest) # mean
+err5 = mean_squared_error(stats.hmean([lgbmpred, linpred]), ytest) # harmonic mean
 print(err3, err4, err5)
 ```
 
-    0.00499853754395 0.00524298328056 0.00517761354333
+    0.004830881999425605 0.005166404680258313 0.004927370731820139
 
 
 Excelente, ouve uma melhora significativa, mas o quão significativa?
@@ -434,17 +438,17 @@ Excelente, ouve uma melhora significativa, mas o quão significativa?
 
 
 
-    0.050317539369457931
+    0.041575363995579706
 
 
 
-Está aí, 5% de melhora do nosso melhor estimador, bem significativo para algo tão simples, e tais aprimoramentos acima de algoritmos de alto desempenho são de extrema importancia no mundo da ciência de dados, talvez até nos ajudaria a pular milhares de posições rumo ao topo em uma competição valendo 1,2 milhões de dólares[^4].
+That's right, a 4% improvement from our best estimator, quite significant for something so simple, and such improvements over high performance algorithms are of utmost importance in the data science world, perhaps even help us jump thousands of positions towards top in a competition worth $ 1.2 million [^4].
 
-### Concluindo
+### Concluding
 
-O objetivo principal dessa publicação era demonstrar que uma combinação simples entre dois modelos podem impactar significamente na sua predição, mas durante esse processo fiz alguns tratamentos nos dados que irão te impressionar sobre o impacto na redução do nosso erro, experimente avaliar os modelos sem realizar alguns dos tratamentos que dei aos dados... Em publicações futuras, será explicado mais sobre cada técnica vista aqui.
+The main purpose of this publication was to demonstrate that a simple combination of two models can significantly impact their prediction, but during this process I did some data treatment that will impress you on the impact of reducing our error, try evaluating the models without performing some of the treatments I gave to the data ... In future publications, more will be explained about each technique seen here.
 
-#### Referências
+#### References
 [^1]: Polikar, R. (2006). "Ensemble based systems in decision making". IEEE Circuits and Systems Magazine. 6 (3): 21–45. doi:10.1109/MCAS.2006.1688199
 
 [^2]: https://stats.stackexchange.com/questions/298/in-linear-regression-when-is-it-appropriate-to-use-the-log-of-an-independent-va
