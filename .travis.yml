@@ -49,7 +49,7 @@ before_script:
 script:
 # Build the package, its tests, and its docs and run the tests
 - stack --no-terminal test --haddock --no-haddock-deps
-- stack --not-terminal build
+- stack --no-terminal build
 after_script:
 - cd _site
 - git status
