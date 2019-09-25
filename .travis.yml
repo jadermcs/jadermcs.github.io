@@ -1,49 +1,25 @@
-# Choose a build environment
-dist: xenial
-
-# Do not choose a language; we provide our own build tools.
-language: generic
-
-# Caching so the next build will be fast too.
-cache:
-  directories:
-  - $HOME/.stack
-
-# Ensure necessary system libraries are present
-addons:
-  apt:
-    packages:
-      - libgmp-dev
-
-before_install:
-# Download and unpack the stack executable
-- mkdir -p ~/.local/bin
-- export PATH=$HOME/.local/bin:$PATH
-- travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-
+language: haskell
+branches:
+  only:
+  - hakyll
+env:
+  global:
+  - secure: C3FrGQqvxfq/CvAxzC5mRJcJyRVeChEHfuqpASeAIZewkC/yUQwpQP8LlF9h+X2QsiaUXDQP0tQpBHd5A0ia+pD48v1BVnbZxTHhZmBLDkTIRZ9aHHOiZMx1/8Db+AZQXDGlLKJHHipPbciWSOYrx0P2kFfguhOQld0Gg+vIRC71SqtH4mpr8itjIQ1Sm5Rzkrvo2eLuAXpcVs+ZEYQzOZgQPvKPbAAhSf8Dqi0yrEACwIsqOeZNfl8SK9NwuzJq5AwIZNm1ErgJrAztw4+OQOm2Ag9nYABlEHf90Fd2fW0TfkRZUitk3txfdrZHi9wKGQcglrszg/uJfM9zQOE7h7ay/zMDnO7FTRZzKTx5vDwwThvgFdXtMECgvcKeqYAs3ZEZ+zO2omjMsQ98TW13f5ZZoROTcKzBLYcF28ztHKNRxIcxBg6xjwS7U/Cj65GRScdflR0HtxS+SLSMoVaspA9uAHBFyMEFSJdCXHRZsqxlimz3cfFoNjlIpUQsvAFT9LuGDfKHN4LpvRld2vXLyRj26XlFrUZUkuRv/sH0df24PUMUlfpS7N5MGLK3No5YRSOfbto7LSSgFWIQBp+tvzxa5YVPeACA38jgy0zjt7ndB47WFP2xE9MFAdbUgv1PzlhwcHp5mYmBpzRan/Vu0yIFy1eAsoTFYKdkKYjEprQ=
 install:
-# Build dependencies
-- stack --no-terminal --install-ghc test --only-dependencies
-- stack build
-
-script:
-# Build the package, its tests, and its docs and run the tests
-- stack --no-terminal test --haddock --no-haddock-deps
-- git stash
-- git checkout hakyll
-- stack exec site clean
-- stack exec site build
-- git fetch --all
+- cabal install hakyll
+- ghc --make site.hs
+before_script:
+- cd _site
 - git checkout master
-- rsync -a --filter='P _site/'      \
-           --filter='P _cache/'     \
-           --filter='P .git/'       \
-           --filter='P .gitignore'  \
-           --filter='P .stack-work' \
-           --delete-excluded        \
-           _site/ .                 \
-           favicon.ico .            \
-           CNAME .
-- git add -A
-- git commit -m "publish."
-- git push origin master:master
+- git pull origin master
+- cd ..
+script: "./site build"
+after_script:
+- cd _site
+- git status
+- git add --all
+- git config --global user.email "$GH_EMAIL"
+- git config --global user.name "Travis"
+- git commit -m "publish $(date '+%m/%d/%y %H:%M')"
+- git push "$REPO_URL" master | grep -v http
+- cd ..
