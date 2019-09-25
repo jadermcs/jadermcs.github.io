@@ -20,7 +20,10 @@ after_script:
 - git commit -m "publish $(date '+%m/%d/%y %H:%M')"
 - git push "$REPO_URL" master | grep -v http
 - cd ..
+# Handle git submodules yourself
+git:
+    submodules: false
+# Use sed to replace the SSH URL with the public URL, then initialize submodules
 before_install:
-- openssl aes-256-cbc -K $encrypted_dcab2b6bd260_key -iv $encrypted_dcab2b6bd260_iv
-  -in circle.enc -out ~\/.ssh/circle -d
-- ssh-add ~\/.ssh/circle -d
+    - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
+    - git submodule update --init --recursive
