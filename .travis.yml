@@ -3,6 +3,7 @@ branches:
   only:
   - hakyll
 install:
+- cabal update
 - cabal install hakyll
 - ghc --make site.hs
 before_script:
