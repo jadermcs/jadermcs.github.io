@@ -2,9 +2,6 @@ language: haskell
 branches:
   only:
   - hakyll
-env:
-  global:
-  - secure: C3FrGQqvxfq/CvAxzC5mRJcJyRVeChEHfuqpASeAIZewkC/yUQwpQP8LlF9h+X2QsiaUXDQP0tQpBHd5A0ia+pD48v1BVnbZxTHhZmBLDkTIRZ9aHHOiZMx1/8Db+AZQXDGlLKJHHipPbciWSOYrx0P2kFfguhOQld0Gg+vIRC71SqtH4mpr8itjIQ1Sm5Rzkrvo2eLuAXpcVs+ZEYQzOZgQPvKPbAAhSf8Dqi0yrEACwIsqOeZNfl8SK9NwuzJq5AwIZNm1ErgJrAztw4+OQOm2Ag9nYABlEHf90Fd2fW0TfkRZUitk3txfdrZHi9wKGQcglrszg/uJfM9zQOE7h7ay/zMDnO7FTRZzKTx5vDwwThvgFdXtMECgvcKeqYAs3ZEZ+zO2omjMsQ98TW13f5ZZoROTcKzBLYcF28ztHKNRxIcxBg6xjwS7U/Cj65GRScdflR0HtxS+SLSMoVaspA9uAHBFyMEFSJdCXHRZsqxlimz3cfFoNjlIpUQsvAFT9LuGDfKHN4LpvRld2vXLyRj26XlFrUZUkuRv/sH0df24PUMUlfpS7N5MGLK3No5YRSOfbto7LSSgFWIQBp+tvzxa5YVPeACA38jgy0zjt7ndB47WFP2xE9MFAdbUgv1PzlhwcHp5mYmBpzRan/Vu0yIFy1eAsoTFYKdkKYjEprQ=
 install:
 - cabal install hakyll
 - ghc --make site.hs
@@ -23,3 +20,5 @@ after_script:
 - git commit -m "publish $(date '+%m/%d/%y %H:%M')"
 - git push "$REPO_URL" master | grep -v http
 - cd ..
+GH_NAME=Jader Martins:
+  secure: eISrjWPjYCMDbYtyFtZV/KOUdAyLhz3yIoOW51/qTS6gRZHZw0xGyXX9HCl7pMemwl6QvnXIaocjbkHVTGllQdjG0NChKWEtInH4l4S5jpzIl0Pa/o3/OzVkI2ugvB+cqZb0BIqXypwDJ3aKxDSmWmfJnTh+0Syjx2KaDxHZtB3bcg+EyevbKqFbHF+6VAduxMIudOlX9dNgxElCdXGJdOnVR3+MyEEoGsvmRmUiOzWmje/FQ6qDYOY5oTQZ9fLdMeRaQsBEwWLYFGi02aH0FM+U1QzVRm5w6g9Z7zDejgqorOV/az5QnfNYT588jlaeDn77l0AP7YsmK1ujtgVF7Bw5Q0nWp4j7CldaQuNDKxuBYiicSC7b2cKdaet200eqSHdoMKZdsHIrUqRUxNBcvrpboOQaYiZIqSdADzzV2WWS1G5ob7xtEIrPrwVGxQvGmbWrtsme90lFRKRNDSlb4ZcOIaQyhWBuGqdtQGUV47HXTrmnlIzGQG99lUG2M+4bIYHrBhsc4zm2WPLiO+omMrlI/QYW0PU7UGgawX8ynIc3dpiSXv7SNMCNK1A00TsLNPrHZSOpBsPMIv2HoQ7g9vmXckkGNCOFuqqD/bxodn9Z+jwwKW9BlQDi95l133UAWkyPv2GESPY3RUE/jTMBFV5b/tPFjCs+h6xo/7UV00s=
