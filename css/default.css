@@ -1,17 +1,18 @@
 body {
     font-size: 16px;
     margin: 0px auto 0px auto;
-    width: 600px;
-    font-family:'IBM Plex Mono', monospace;
-    color:#222831
+    width: 800px;
+    font-family:'IBM Plex Serif', serif;
+    color: lightgray;
+    background-color: #222831;
 }
 div#header {
-    border-bottom: 2px solid #222831;
+    border-bottom: 2px solid lightgray;
     margin-bottom: 30px;
     padding: 12px 0px 12px 0px;
 }
 div#logo a {
-    color: #222831;
+    color: lightgray;
     float: left;
     font-size: 18px;
     font-weight: bold;
@@ -21,19 +22,22 @@ div#header #navigation {
     text-align: right;
 }
 div#header #navigation a {
-    color: #222831;
+    color: lightgray;
     font-size: 18px;
     font-weight: bold;
     margin-left: 12px;
     text-decoration: none;
 }
 div#footer {
-    border-top: solid 2px #222831;
+    border-top: solid 2px lightgray;
     color: #555;
     font-size: 12px;
     margin-top: 30px;
     padding: 12px 0px 12px 0px;
     text-align: right;
+}
+a{
+    color: #8db596;
 }
 h1 {
     font-size: 24px;

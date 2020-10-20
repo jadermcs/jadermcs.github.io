@@ -1,5 +1,5 @@
 ---
-title: Linear Ensemble
+title: Weighted Ensemble
 date: 2017-08-17 10:00:00
 tags: [regression, ensemble]
 author: Jader Martins
@@ -177,7 +177,7 @@ df.plot.box(figsize=(10,3), patch_artist=True);
 <img src="/images/output_5_0.svg" width=600px>
 
 
-First I load the chart libraries that I will use throughout the text, set the style and color palette for the chart, then set up a _prices_ dataframe to receive two columns of values, one with the price without transformation, the other with the transformed price by log1p ($ log (x + 1) $) function.
+First I load the chart libraries that I will use throughout the text, set the style and color palette for the chart, then set up a _prices_ dataframe to receive two columns of values, one with the price without transformation, the other with the transformed price by log1p ($log(x + 1)$) function.
 
 
 ```python
