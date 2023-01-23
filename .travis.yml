@@ -1,61 +1,19 @@
-# This is the simple Travis configuration, which is intended for use
-# on applications which do not require cross-platform and
-# multiple-GHC-version support. For more information and other
-# options, see:
-#
-# https://docs.haskellstack.org/en/stable/travis_ci/
-#
-# Copy these contents into the root directory of your Github project in a file
-# named .travis.yml
+language: minimal
 
-# Choose a build environment
-dist: xenial
-
-# Do not choose a language; we provide our own build tools.
-language: generic
-
-# Caching so the next build will be fast too.
-cache:
-  directories:
-  - $HOME/.stack
-branches:
-  only:
-  - hakyll
-# Handle git submodules yourself
-git:
-    submodules: false
-# Ensure necessary system libraries are present
-addons:
-  apt:
-    packages:
-      - libgmp-dev
-
-before_install:
-# Download and unpack the stack executable
-- sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
-- git submodule update --init --recursive
-- mkdir -p ~/.local/bin
-- export PATH=$HOME/.local/bin:$PATH
-- travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-
-install:
-# Build dependencies
-- stack --no-terminal --install-ghc test --only-dependencies
 before_script:
-- cd _site
-- git checkout master
-- git pull origin master
-- cd ..
+  # Download and unzip the zola executable
+  # Replace the version numbers in the URL by the version you want to use
+  - curl -s -L https://github.com/getzola/zola/releases/download/v0.13.0/zola-v0.13.0-x86_64-unknown-linux-gnu.tar.gz | sudo tar xvzf - -C /usr/local/bin
+
 script:
-# Build the package, its tests, and its docs and run the tests
-- stack --no-terminal test --haddock --no-haddock-deps
-- stack --no-terminal build
-after_script:
-- cd _site
-- git status
-- git add --all
-- git config --global user.email "$GH_EMAIL"
-- git config --global user.name "Travis"
-- git commit -m "publish $(date '+%m/%d/%y %H:%M')"
-- git push "$REPO_URL" master | grep -v http
-- cd ..
+  - zola build
+
+# If you are using a different folder than `public` for the output directory, you will
+# need to change the `zola` command and the `ghp-import` path
+after_success: |
+  [ $TRAVIS_BRANCH = code ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  zola build &&
+  sudo pip install ghp-import &&
+  ghp-import -n public -b master &&
+  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git master

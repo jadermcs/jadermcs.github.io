@@ -1,12 +1,7 @@
----
-title: "Readings 2023"
-date: 2023-01-22 22:21:00
-tags: [reading]
-author: Jader Martins
----
-
-
-title: "Readings 2023"
++++
+title = "Readings 2023"
+date = 2023-01-22
++++
 
 Okay, so I am reviving this blog to post reviews about my readings
 for this year. I pretend to focus my readings in economy, philosophy,
@@ -14,7 +9,8 @@ for this year. I pretend to focus my readings in economy, philosophy,
 
 # Economy in One Lesson
 by Henry Hazlitt
-![](https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1519935381i/38896227.jpg)
+
+<iframe type="text/html" sandbox="allow-scripts allow-same-origin allow-popups" width="212" height="362" frameborder="0" allowfullscreen style="max-width:100%" src="https://lesen.amazon.de/kp/card?asin=B003XT60KO&preview=newtab&linkCode=kpe&ref_=cm_sw_r_kb_dp_7XKZDFACZHD9EFEPQ6FY&hideBuy=true&hideShare=true" ></iframe>
 
 This book is still up-to-date with recent problems we face. Henry follows
 a supply demand approach in his analysis of many economical issues. It
@@ -27,7 +23,8 @@ book for anyone.
 
 # The Hobbit
 by J.R.R. Tolkien
-![](https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1563273084l/51593417.jpg)
+
+<iframe type="text/html" sandbox="allow-scripts allow-same-origin allow-popups" width="212" height="362" frameborder="0" allowfullscreen style="max-width:100%" src="https://lesen.amazon.de/kp/card?asin=B002RI9ZY0&preview=newtab&linkCode=kpe&ref_=cm_sw_r_kb_dp_8CXS65DX8H2GGTKBTP0X&hideBuy=true&hideShare=true" ></iframe>
 
 This is certanly one of the times that I want to erase my memory so I could
 truly appreciate something. This book is surely a master piece, but reading

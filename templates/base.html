@@ -4,29 +4,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title>Blog - $title$</title>
-        <link rel="stylesheet" type="text/css" href="/css/default.css" />
+        <title>{{config.extra.blog_title}}</title>
+        <link rel="stylesheet" type="text/css" href="/default.css" />
         <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
         <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML,Safe"></script>
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML,Safe"></script>
     </head>
     <body>
         <div id="header">
             <div id="logo">
-                <a>Blog</a>
+                <a>{{config.extra.blog_title}}</a>
             </div>
             <div id="navigation">
-                <a href="/">Home</a>
-                <a href="/about.html">About</a>
-                <a href="/projects.html">Projects</a>
-                <a href="/archive.html">Archive</a>
+                <a href="/">home</a>
+                <a href="/about">about</a>
+                <a href="/projects">projects</a>
+                <a href="/archive">archive</a>
             </div>
         </div>
 
         <div id="content">
-            <h1>$title$</h1>
-
-            $body$
+            {% block content %} {% endblock %}
         </div>
         <div id="footer">
             Jader Martins - 2021

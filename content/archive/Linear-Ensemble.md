@@ -1,9 +1,7 @@
----
-title: Weighted Ensemble
-date: 2017-08-17 10:00:00
-tags: [regression, ensemble]
-author: Jader Martins
----
++++
+title = "Weighted Ensemble"
+date = 2017-08-17
++++
 
 Pricing certain items before they enter the market is essential for good acceptance and consumption. Making a product available at the market below the market price does not give you good returns, but also a very high value does not appeal to buyers, regressive models in this case are of great help in making the decision about the pricing of an input. The predictive performance of composite models compared to simple models has been remarkable in many areas [^1], simple models are those that use [pure machine learning algorithms](https://en.wikipedia.org/wiki/Machine_learning#Models), whereas composite models combine the predictions of two or more algorithms in an attempt to improve the prediction. In this post I will try to present efficient ways to combine models to minimize the error of Boston's square-meter property price predictions.
 

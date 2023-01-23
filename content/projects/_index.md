@@ -1,6 +1,6 @@
----
-title: Projects
----
++++
+title = "projects"
++++
 
 <a href="/flights">Flights Visualizaiton</a>
 <p>A D3.js visualization showing the impact of terrorist attacks between 2000-2002 flights cancelation.</p>

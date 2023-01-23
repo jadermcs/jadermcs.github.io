@@ -1,6 +1,6 @@
----
-title: About
----
++++
+title = "about"
++++
 
 I am Jader computer scientist from University of Brasilia currently doing a MSc
 degree at Unicamp. For my BSc thesis I studied meta-learning applied to

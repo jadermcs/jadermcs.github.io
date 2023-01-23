@@ -1,9 +1,8 @@
----
-title: The Problem of Induction
-date: 2020-09-03 12:32:00
-tags: [induction, epistemology]
-author: Jader Martins
----
++++
+title = "The Problem of Induction"
+date = 2020-09-03
++++
+
 The cause and effect framework is a natural way of human thinking
 
 # Epistemology

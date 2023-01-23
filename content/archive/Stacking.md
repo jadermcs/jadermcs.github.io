@@ -1,11 +1,7 @@
----
-layout: post
-title: Stacked Generalization
-lang: pt
-date: 2019-04-22 12:59:07
-tags: [ensemble, meta-learning]
-author: Jader Martins
----
++++
+title = "Stacked Generalization"
+date = 2019-04-22
++++
 
 Introduced by Wolpert in 1992[^1], this generalization technique consists of combining nonlinear estimators to correct their biases to a given training set, adding their capabilities for better prediction[^2].
 
