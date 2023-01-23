@@ -5,17 +5,17 @@ date = 2019-04-22
 
 Introduced by Wolpert in 1992[^1], this generalization technique consists of combining nonlinear estimators to correct their biases to a given training set, adding their capabilities for better prediction[^2].
 
-<img src="/images/stacking.png" width=600px>
+<img src="/images/stacking.png" width=600px class="center">
 
-In a [previous post](/posts/Linear-Ensemble.html) I presented the linear combination of estimators, in it we adjusted $N$ models to a $D$ dataset and a priori we defined $W$ weights for them by combining into one summation:
+In a [previous post](/posts/Linear-Ensemble.html) I presented the linear combination of estimators, in it we adjusted \\(N\\) models to a \\(D\\) dataset and a priori we defined \\(W\\) weights for them by combining into one summation:
 
 $$\sum_{i=1}^{N} w_{i}M_{i}$$
 
 $$\text{given a priori} \ W = (w_1,w_2,...w_N) \ \text{and} \sum W = 1$$
 
-With this the weighted average of the predictions in general will be less biased for certain regions and may generalize more, but this method has two limitations, the weights cannot be changed after verifying the performance (if we would not be acting as a meta-estimator in test data) and is an extremely simple combination, not leveraging the strengths of the $M$ estimators for certain regions.
+With this the weighted average of the predictions in general will be less biased for certain regions and may generalize more, but this method has two limitations, the weights cannot be changed after verifying the performance (if we would not be acting as a meta-estimator in test data) and is an extremely simple combination, not leveraging the strengths of the \\(M\\) estimators for certain regions.
 
-Wolpert then proposes an alternative to this, what if we make $W$ pesos a learning problem? or rather, not only learn how to combine our predictions but also combine them nonlinearly using a meta estimator?
+Wolpert then proposes an alternative to this, what if we make \\(W\\) pesos a learning problem? or rather, not only learn how to combine our predictions but also combine them nonlinearly using a meta estimator?
 
 Meta estimators are those who use base models to combine them or select them to improve on a performance metric, for example you reader when deciding between using a random forest or a logistic regression to predict your model you are being a meta estimator. But here the problem of generalization arises, if you continue to improve your regression or rforest you may end up overfitting the data and not being able to generalize, here then it is necessary to apply cross validation techniques to select the model, the same will happen for the stacking.
 

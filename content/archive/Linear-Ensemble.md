@@ -157,7 +157,7 @@ df.head()
 Here I load my data into the *df* variable and show the first 5 lines with the head command.
 
 We have information like crime of the region, average age of the population, etc ..
-Although it is not the focus of this post, the distribution of our data may cause our regressor to make it very difficult, so I will apply a simple feature engineering to make our distribution more normal, in future posts will be explained in detail what is feature engineering and how to use it to improve your predictions. First let's see how the distribution we want to predict next to the "normalized" distribution by $log (x + 1)$, (adding one to the value avoids us having problems with zeros).
+Although it is not the focus of this post, the distribution of our data may cause our regressor to make it very difficult, so I will apply a simple feature engineering to make our distribution more normal, in future posts will be explained in detail what is feature engineering and how to use it to improve your predictions. First let's see how the distribution we want to predict next to the "normalized" distribution by \\(log (x + 1)\\), (adding one to the value avoids us having problems with zeros).
 
 
 ```python
@@ -171,11 +171,10 @@ sns.set(style="whitegrid", palette="coolwarm")
 df.plot.box(figsize=(10,3), patch_artist=True);
 ```
 
+<img src="/images/output_5_0.svg" width=800px>
 
-<img src="/images/output_5_0.svg" width=600px>
 
-
-First I load the chart libraries that I will use throughout the text, set the style and color palette for the chart, then set up a _prices_ dataframe to receive two columns of values, one with the price without transformation, the other with the transformed price by log1p ($log(x + 1)$) function.
+First I load the chart libraries that I will use throughout the text, set the style and color palette for the chart, then set up a _prices_ dataframe to receive two columns of values, one with the price without transformation, the other with the transformed price by log1p (\\(log(x + 1)\\)) function.
 
 
 ```python
@@ -186,7 +185,7 @@ plt.ylabel("Amount");
 ```
 
 
-<img src="/images/output_7_0.svg" width=600px>
+<img src="/images/output_7_0.svg" width=800px>
 
 
 We can see that our distribution has been less spaced and a little closer to a normal distribution, but Python has a statistical function that helps us evaluate whether this will be necessary or not, through the Box-Cox test that will have clues with the degree of skewness.
@@ -224,7 +223,7 @@ plt.ylabel("Amount");
 ```
 
 
-<img src="/images/output_11_0.svg" width=600px>
+<img src="/images/output_11_0.svg" width=800px>
 
 
 
@@ -246,10 +245,10 @@ plt.ylabel("Amount");
 ```
 
 
-<img src="/images/output_13_0.svg" width=600px>
+<img src="/images/output_13_0.svg" width=800px>
 
 
-Vemos que as distribuições ficaram muito mais centradas e tendendo a distribuição gaussiana[^2], o que será excelente para o ajuste dos nossos estimadores[^3]. Sendo a função logarítmica e a função f.x+1 bijetoras, poderemos retornar ao nosso valor original assim que acabarmos o ajuste do modelo.
+Vemos que as distribuições ficaram muito mais centradas e tendendo a distribuição gaussiana[^2], o que será excelente para o ajuste dos nossos estimadores[^3]. Sendo a função logarítmica e a função \\(f.x+1\\) bijetoras, poderemos retornar ao nosso valor original assim que acabarmos o ajuste do modelo.
 
 
 #### Simplificando nossos dados
@@ -328,7 +327,7 @@ df.plot.box(figsize=(10,3), patch_artist=True);
 ```
 
 
-<img src="/images/output_19_0.svg" width=600px>
+<img src="/images/output_19_0.svg" width=800px>
 
 
 As already discussed in other posts, we should separate the data into a training and testing set, to train our model and to know how well our model will predict for unknown cases. Read [this article](https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff) for a better understanding.
@@ -396,7 +395,7 @@ predictions.plot(x = "LightGBM", y = "Ridge", kind = "scatter", color="#85C8DD")
 ```
 
 
-<img src="/images/output_28_0.svg" width=600px>
+<img src="/images/output_28_0.svg" width=800px>
 
 
 As already explained, a low correlation tends to significantly improve our prediction, visually we have something significant, let's look at that now in numbers.
