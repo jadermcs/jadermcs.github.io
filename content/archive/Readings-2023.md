@@ -1,6 +1,7 @@
 +++
 title = "Readings 2023"
 date = 2023-01-22
+update = 2023-01-23
 +++
 
 Okay, so I am reviving this blog to post reviews about my readings
