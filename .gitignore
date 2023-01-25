@@ -1,3 +1,4 @@
+create_post
 dist
 cabal-dev
 *.o
