@@ -2,13 +2,7 @@ use std::fs::File;
 use std::io;
 use std::io::Write;
 use std::path::Path;
-use std::time::SystemTime;
-
-fn today() -> &'static str {
-    let now = SystemTime::now();
-    let year = "1990";
-    return year;
-}
+use std::process::Command;
 
 fn main() {
     println!("Title of the publication:");
@@ -28,11 +22,20 @@ fn main() {
         Ok(file) => file,
     };
 
-    let date = today();
-    let output = format!("+++\ntitle = \"{}\"\ndate = {}\n+++\n\n", title, date);
+    let output = format!(
+        "+++\ntitle = \"{}\"\ndate = {}\n+++\n\n\n",
+        title, "2023-01-01"
+    );
 
     match file.write_all(output.as_bytes()) {
         Err(why) => panic!("couldn't write to {}: {}", display, why),
         Ok(_) => println!("successfully wrote to {}", display),
     }
+    Command::new("/usr/bin/zsh")
+        .arg("-c")
+        .arg(format!("vim \"+call cursor(6,0)\" {}", display))
+        .spawn()
+        .expect("vi command failed")
+        .wait()
+        .expect("editor failed");
 }
