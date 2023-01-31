@@ -1,5 +1,5 @@
 +++
-title = "Optimizing Python - Caching"
+title = "Optimization - Caching"
 date = 2023-01-27
 +++
 
