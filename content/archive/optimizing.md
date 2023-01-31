@@ -33,9 +33,9 @@ solution is use a dict to keep previous computed data stored.
 num = {0: 1, 1:1}
 
 def fib(a):
-    if a in num:
-        return num[a]
-    return fib(a-1) + fib(a-2)
+    if a not in num:
+        num[a] = fib(a-1) + fib(a-2)
+    return num[a]
 
 for i in [10, 20, 50]:
     print(fib(i))
