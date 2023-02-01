@@ -77,3 +77,8 @@ def fib(a):
 for i in [10, 20, 50]:
     print(fib(i))
 ```
+Caching names, methods, etc.
+
+```python
+
+```
