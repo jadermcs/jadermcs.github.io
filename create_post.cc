@@ -27,6 +27,6 @@ int main() {
     file << "+++\ntitle = \"" << title << "\"\ndate = " << buf << "\n+++\n\n\n";
     file.close();
     std::string call = "/usr/bin/vim \"+call cursor(6,0)\" " + path;
-    std::cout << call << std::endl;
     system(call.c_str());
+    std::cout << "File created at: " << path << std::endl;
 }
