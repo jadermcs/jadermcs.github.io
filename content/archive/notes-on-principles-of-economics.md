@@ -201,6 +201,9 @@ However, signaling can also lead to certain inefficiencies in the labor market. 
 Overall, signaling is an important factor in the labor market, and can play a significant role in determining who gets hired and how much they are paid. It is important for both employers and employees to understand the role of signaling in the labor market in order to make informed decisions about their careers and job opportunities.
 
 # Public Goods and the Tragedy of the Commons
+- Non excludable
+- Non rival
+- Club goods
 
 # Asymmetric Information
 
