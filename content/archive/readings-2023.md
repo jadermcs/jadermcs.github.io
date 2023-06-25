@@ -58,3 +58,25 @@ being rational extends for long pages in the book. This book got me in many ways
 studying about AI, the subjects addressed are very important so answer
 many questions in AI.
 
+# Foundation \#1
+by Isaac Asimov
+
+<img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1608139977i/56311775.jpg" width=212px>
+
+I love sci-fi literature, but by far Asimov is the best writer I ever experienced
+their books follows a "compilation of small stories" in the same universe. I am
+not sure now why he follows this model, but as I can't binge-read books, it helps
+me not get lost when I return after some weeks. The history is around the psico-history
+a super complex field of statistics that just a few mind in the entire galaxy can 
+understand. By using this science to predict that the empire will fall, Seldon
+creates a encyclopedia, to save human from "intellectual dark ages". The way
+the plot is executed is surely captivating, a must read for sci-fi fans.
+
+# The State
+by Franz Oppenheimer
+
+<img src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1268001196i/3431702.jpg" width=212px>
+
+This book tracks the origins of state, it constantly defends that the historical 
+origins of state is fundamentally maint this status of conqueror using tributes
+and suppressing the resistance.

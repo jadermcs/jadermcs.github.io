@@ -16,7 +16,7 @@ By doing so, all parties can benefit from increased efficiency and higher standa
 
 Temporal preferences play an important role in various aspects of economic behavior, including saving and investment decisions, borrowing and lending decisions, and the consumption of goods and services over time.
 
-Economic models often assume that individuals have intertemporal preferences that are consistent and stable over time, and that individuals make decisions that maximize their expected utility over time. However, in practice, temporal preferences can vary based on a variety of factors, such as income, age, and risk tolerance, and may change over time as individuals' circumstances and preferences change.
+Economic models often assume that individuals have inter temporal preferences that are consistent and stable over time, and that individuals make decisions that maximize their expected utility over time. However, in practice, temporal preferences can vary based on a variety of factors, such as income, age, and risk tolerance, and may change over time as individuals' circumstances and preferences change.
 
 Understanding temporal preferences is important for policymakers and economists as they can impact a wide range of economic outcomes, such as consumption patterns, savings and investment decisions, and the overall functioning of the economy. Thus, it is important to consider temporal preferences when designing and evaluating economic policies, such as those related to savings and retirement, debt management, and consumption taxes.
 
@@ -64,7 +64,7 @@ Overall, commodity taxes can play an important role in shaping the economy, as t
 
 Subsidies can take many forms, including direct payments, tax breaks, low-interest loans, or the provision of goods or services at below-market prices. They are often used to address market failures, such as externalities, or to support industries or regions that are seen as struggling.
 
-However, subsidies can also lead to unintended consequences, such as creating a distorted market and encouraging inefficiency, reducing the competitiveness of unsubsidized firms, or leading to the overproduction of goods or services that may not be in demand.
+However, subsidies can also lead to unintended consequences, such as creating a distorted market and encouraging inefficiency, reducing the competitiveness of unsubsidised firms, or leading to the overproduction of goods or services that may not be in demand.
 
 It is important for governments to carefully consider the impact of subsidies, as well as alternative policy options, when designing and implementing economic policies. This can involve evaluating the costs and benefits of subsidies, considering their impact on the economy and society as a whole, and ensuring that subsidies are well-targeted and transparent, in order to maximize their effectiveness and minimize any potential negative effects.
 
@@ -204,6 +204,7 @@ Overall, signaling is an important factor in the labor market, and can play a si
 - Non excludable
 - Non rival
 - Club goods
+- without property rights the tragedy of the commons happens, so we should at least create a pseudo-property to simulate the properties that avoids this to happen.
 
 # Asymmetric Information
 
