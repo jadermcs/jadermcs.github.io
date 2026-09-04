@@ -53,27 +53,53 @@ Treating it as a hoard produces a specific error: the assumption that the quanti
 
 It often doesn't, because the measurement was conditional on the arrangement that generated it. A large fraction of what makes a founder's stake worth what it's worth is the market's forecast about that specific firm continuing to do that specific thing. Change the arrangement enough and you haven't transferred the number, you've partly evaporated it — the same way you can't harvest the nurse's $750,000 by liquidating the nurse. What you'd get is $160.
 
+## The chicken and the egg
+
+Now push harder, because there's a problem sitting underneath the measurement one.
+
+Suppose Saez and Zucman are completely right and every implementation objection gets solved. Valuation methods for illiquid stakes, a withholding mechanism, enforcement good enough to stop the obvious dodges. Grant all of it. There's still something circular sitting at the bottom, and it's the most interesting part of this whole question.
+
+The $80 billion was measured in a particular world. Specifically, a world in which that stake stays concentrated, the firm keeps being run the way it's being run, and the future stream the price is discounting doesn't get taxed away. Every one of those conditions is an input to the number. And a large redistribution changes all three.
+
+Start with the mildest version. A credible tax on future returns doesn't wait for collection day to show up — it gets priced immediately. The [capital gains tax capitalization literature](https://www.nber.org/system/files/working_papers/w12342/w12342.pdf) is about exactly this: buyers discount what they'll pay to compensate for tax they'll owe later, so expected future taxes are already sitting in today's share price. Announce a credible claim on the stream and the asset reprices *before* you collect anything. The base shrinks partly because you announced you were coming for it.
+
+Then the harder version. Ownership identity is itself priced. This is the core of [Jensen and Meckling](https://www.sfu.ca/~wainwrig/Econ400/jensen-meckling.pdf) (1976): the size of the manager's equity stake determines how much the manager's interests track the shareholders', and agency costs rise as that fraction falls. A concentrated founder stake isn't incidental to the valuation; it's part of what the valuation is *about*. Redistribute it into millions of small claims or a state holding, and you haven't just moved the asset, you've changed the governance structure the forecast assumed.
+
+And markets do price this, though not in the direction people usually assume. The [best study I found on CEO deaths](https://www.ecgi.global/sites/default/files/working_papers/documents/goodandbadceos.pdf) — 449 of them in US public firms between 1980 and 2012 — finds the average reaction is small but the *variance* is enormous. Deaths of young founder-CEOs produce the most negative reactions. Deaths of old, long-tenured founder-CEOs produce the most *positive* ones, because the market was apparently paying a premium to someone who'd stopped earning it. So "the company is worth less without its founder" is sometimes true and sometimes exactly backwards, and the market has opinions about which.
+
+The general form of this has a name. It's the [Lucas critique](https://www.federalreserve.gov/econres/ifdp/post-econometric-policy-evaluation-a-critique.htm) (1976): you cannot use a relationship estimated under one policy regime to predict what happens under a different one, because the quantities you measured were chosen by forward-looking people responding to the regime you're about to change. Lucas was writing about macroeconometric models, but the structure is identical here. The $80 billion is a parameter estimated under the current rules. Use it to forecast the yield of a policy that changes those rules and you're doing precisely the thing Lucas said doesn't work.
+
+Which gives the circularity its shape. The valuation is evidence about a world in which that valuation is left alone. The size of the prize is partly a measurement of the arrangement that produced it — including, uncomfortably, the arrangement's not-redistributing. You can't read the number off the board, act on it, and expect the number to have survived the reading. Add avoidance on top — wealth restructuring into forms the rule doesn't reach, which is the empirically well-attested part — and the base is moving away from you along at least two axes at once.
+
+I want to stop short of where this argument wants to go, though, because taken to its end it proves far too much. *Every* tax changes its own base. Income taxes reduce labor supply somewhat; we tax income anyway. If "the measured quantity won't survive being targeted" were a veto, no tax on anything could ever be justified, and that's obviously wrong. What endogeneity actually does is convert a yes/no question into a magnitude question: not "can you touch it" but "how much is left after it reprices, restructures, and reorganizes, and is that remainder worth the cost of collecting it?" That's an empirical question with a real answer, and it's much less satisfying than either slogan, because the answer is a number nobody has yet and it differs for every design.
+
 ## The honest counterarguments
 
 I want to be fair to the other side here, because the analogy can be pushed into a claim it doesn't support.
 
 **Earnings are not the same as social contribution.** The whole DCF frame prices the *stream captured*, not the *value created*. Those come apart badly under market power, regulatory capture, rent extraction, and lucky positioning. The nurse almost certainly creates far more value than she captures; some fortunes almost certainly capture far more than they create. "Fortune = measured potential to create value" is only true where prices track social value, and that's an assumption, not a theorem. Note this cuts in a specific direction: it argues the nurse is *underpriced*, not that the framing is wrong.
 
-**"It's only paper wealth" proves less than it seems.** Illiquid assets still purchase real things: collateral for loans, control over how capital gets deployed, political influence. And the wealth-tax literature has thought hard about the valuation objection. Saez and Zucman's [BPEA paper](https://eml.berkeley.edu/~saez/saez-zucmanBPEAoct19.pdf) and the [critique](https://www.columbia.edu/~wk2110/bin/BPEASaezZucman.pdf) alongside it are the honest version of this debate; their [capital-gains withholding proposal](https://gabriel-zucman.eu/files/SYZ2021.pdf) is partly an attempt to route around exactly the "you can't value it" problem. You can accept every word about stocks versus flows and still think the flows should be taxed differently.
+**"It's only paper wealth" proves less than it seems.** Illiquid assets still purchase real things: collateral for loans, control over how capital gets deployed, political influence. You can accept every word about stocks versus flows and still think the flows should be taxed differently.
 
 **Forecasts can be wrong in both directions.** If a valuation is a forecast, it can be inflated as easily as it can be sound. Sometimes the market's discounted stream is a bubble, and the honest description of "this fortune is a measurement of expected future production" is "this fortune is a measurement of what people currently believe about future production."
 
-## Has anyone written this before?
 
-Sort of, and this is what surprised me. Every individual piece is well established:
+## No problem this size is easy
 
-- Human capital as discounted future earnings: Becker, 1964, foundational.
-- Human capital as a risky, illiquid, non-diversifiable asset class: standard in the [lifecycle finance literature](https://www.researchgate.net/publication/251852872_Lifetime_Financial_Advice_Human_Capital_Asset_Allocation_and_Insurance).
-- Statistical valuation of a life for policy: [EPA and OMB](https://www.epa.gov/environmental-economics/mortality-risk-valuation), routine.
-- "The body's chemicals are worth $160": [a stock science-writing trope](https://www.chemistryworld.com/opinion/how-much-are-you-worth/3005591.article), usually deployed as a humbling curiosity.
-- Net worth as forecast rather than hoard: [well covered](https://en.wikipedia.org/wiki/Paper_wealth) in finance explainers.
-- Fixed-pie thinking as an error: [a whole genre](https://catalyst.independent.org/2019/12/26/there-is-no-pie-the-fallacy-of-zero-sum-economic-thinking/).
+None of this adds up to "leave fortunes alone." It adds up to something more annoying: the redistribution argument, in the form it usually gets made, is not describing an operation that exists.
 
-What I couldn't find is the assembly. The body-chemicals figure lives in science trivia and never gets used as an *economic* argument. The human capital literature is technical and never reaches for the scrap-value comparison to make the stock/flow distinction vivid. And the fixed-pie essays argue against the plain version of the fallacy, not the valuation version. The pieces sit in four separate literatures that don't cite each other.
+"Take the $80 billion and give it to people who need it" sounds like one action. It's at least four, and each one leaks:
 
-Which is the point of the analogy, if it has one. Nobody needs to be argued out of pricing a nurse at $160 — the absurdity does the work instantly. The claim is that the same move, applied to a fortune, is the same category error, and it doesn't feel absurd only because we're less practiced at seeing it. The reason a nurse is worth more than her calcium is the same reason a fortune is not a stack of gold in a room: both numbers are claims on futures that might not arrive, priced under uncertainty, by people who don't know how it ends.
+**Valuing it.** The $80 billion is a price on the last shares traded, extrapolated across a stake nobody is trying to sell — and, per the section above, a price conditional on rules you're about to change.
+
+**Converting it.** Someone has to be on the other side of the trade. A controlling stake sold at scale gets bought by pension funds, sovereign wealth funds, other wealthy individuals — which means a large redistribution is partly a reshuffle of who holds the claim, not a conversion of paper into groceries. The money doesn't materialize; it changes hands, at a price that moved because you asked.
+
+**Landing it on the intended person.** Who writes the check and who actually bears the cost are different questions, and public finance has spent a century on the gap between them. Taxes get shifted into prices, wages, and returns in ways that are genuinely hard to predict and vary by which tax you pick.
+
+**Keeping the stream alive afterward.** Streams respond to how they're taxed. Not "the rich will all flee" — that's a talking point, and the empirical literature on it is contested and mostly finds smaller effects than the rhetoric claims. But "zero response" isn't the finding either, and the magnitude is the whole argument.
+
+The other side of this is just as unfinished, and I don't want to hand anyone a free pass. "It's only paper wealth, so nothing can be done" is the same error wearing different clothes — treating a forecast as untouchable rather than as a hoard, and mistaking "hard to value" for "must not be touched." The nurse cuts against complacency more than she cuts for it. If her captured stream is a small fraction of the value she creates, that gap is a real distortion, and noticing that fortunes are forecasts doesn't explain it away.
+
+So the honest position is uncomfortable from both directions. The measured fortune is not a pile you can pick up and carry. It is also not a mirage you're obliged to ignore. Which means there's no clean move available — only tax design, incidence estimates, valuation rules for illiquid assets, second-order effects, and a lot of arguing about magnitudes. This is why the serious version of the debate reads nothing like the slogans: Saez and Zucman's [progressive wealth tax](https://eml.berkeley.edu/~saez/saez-zucmanBPEAoct19.pdf) and their [capital-gains withholding proposal](https://gabriel-zucman.eu/files/SYZ2021.pdf) are interesting precisely because they try to engineer around specific leaks rather than wish them away — and the [published critiques](https://www.columbia.edu/~wk2110/bin/BPEASaezZucman.pdf) are worth as much as the proposals.
+
+That's the part the slogans on both sides skip. Big problems don't have moves that are simultaneously simple, large, and free. The nurse doesn't tell you what to do about billionaires. She tells you that anyone who thinks the answer is obvious is working from the wrong number: the reason she's worth more than her calcium is the same reason a fortune isn't a stack of gold in a room. Both are claims on futures that might not arrive, priced under uncertainty, by people who don't know how it ends.
