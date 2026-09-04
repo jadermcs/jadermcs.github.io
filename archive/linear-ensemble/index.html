@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>.halted</title>
+        <link rel="stylesheet" type="text/css" href="/default.css" />
+        <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML,Safe"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="/">.halted</a>
+            </div>
+            <div id="navigation">
+                <a href="/about">about</a>
+                <a href="/projects">projects</a>
+                <a href="/archive">archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            
+<h1 class="title">
+  Weighted Ensemble
+</h1>
+<p class="subtitle"><strong>2017-08-17</strong></p>
+<p>Pricing certain items before they enter the market is essential for good acceptance and consumption. Making a product available at the market below the market price does not give you good returns, but also a very high value does not appeal to buyers, regressive models in this case are of great help in making the decision about the pricing of an input. The predictive performance of composite models compared to simple models has been remarkable in many areas <sup class="footnote-reference"><a href="#1">1</a></sup>, simple models are those that use <a href="https://en.wikipedia.org/wiki/Machine_learning#Models">pure machine learning algorithms</a>, whereas composite models combine the predictions of two or more algorithms in an attempt to improve the prediction. In this post I will try to present efficient ways to combine models to minimize the error of Boston's square-meter property price predictions.</p>
+<h3 id="preparing-the-data">Preparing the Data</h3>
+<p>Here I will use a famous house price dataset, but the technique discussed here can be extended to pricing almost anything. First I will import and load my dataset into the “boston” variable using Pandas, the Python module famous for its data analysis focused on finance. The dataset comes from the Scikit-Learn module that we will use throughout this post to work with AM, it provides tools from data handling to a machine learning <em>pipeline</em>. We will also use the Numpy module.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>%config InlineBackend.figure_formats = [&#39;</span><span style="color:#a3be8c;">svg</span><span>&#39;]
+</span><span>%matplotlib inline
+</span><span>
+</span><span style="color:#b48ead;">from </span><span>sklearn.datasets </span><span style="color:#b48ead;">import </span><span>load_boston
+</span><span style="color:#b48ead;">import </span><span>numpy </span><span style="color:#b48ead;">as </span><span>np
+</span><span style="color:#b48ead;">import </span><span>pandas </span><span style="color:#b48ead;">as </span><span>pd
+</span><span>
+</span><span>boston = </span><span style="color:#bf616a;">load_boston</span><span>()
+</span><span>
+</span><span>df = pd.</span><span style="color:#bf616a;">DataFrame</span><span>(
+</span><span>    np.</span><span style="color:#bf616a;">column_stack</span><span>([boston.data, boston.target]),
+</span><span>    </span><span style="color:#bf616a;">columns</span><span>=np.r_[boston.feature_names, [&#39;</span><span style="color:#a3be8c;">MEDV</span><span>&#39;]])
+</span><span>df.</span><span style="color:#bf616a;">head</span><span>()
+</span></code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>.dataframe tbody tr th {
+</span><span>    vertical-align: top;
+</span><span>}
+</span><span>
+</span><span>.dataframe thead th {
+</span><span>    text-align: right;
+</span><span>}
+</span></code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>CRIM</th>
+      <th>ZN</th>
+      <th>INDUS</th>
+      <th>CHAS</th>
+      <th>NOX</th>
+      <th>RM</th>
+      <th>AGE</th>
+      <th>DIS</th>
+      <th>RAD</th>
+      <th>TAX</th>
+      <th>PTRATIO</th>
+      <th>B</th>
+      <th>LSTAT</th>
+      <th>MEDV</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.00632</td>
+      <td>18.0</td>
+      <td>2.31</td>
+      <td>0.0</td>
+      <td>0.538</td>
+      <td>6.575</td>
+      <td>65.2</td>
+      <td>4.0900</td>
+      <td>1.0</td>
+      <td>296.0</td>
+      <td>15.3</td>
+      <td>396.90</td>
+      <td>4.98</td>
+      <td>24.0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.02731</td>
+      <td>0.0</td>
+      <td>7.07</td>
+      <td>0.0</td>
+      <td>0.469</td>
+      <td>6.421</td>
+      <td>78.9</td>
+      <td>4.9671</td>
+      <td>2.0</td>
+      <td>242.0</td>
+      <td>17.8</td>
+      <td>396.90</td>
+      <td>9.14</td>
+      <td>21.6</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.02729</td>
+      <td>0.0</td>
+      <td>7.07</td>
+      <td>0.0</td>
+      <td>0.469</td>
+      <td>7.185</td>
+      <td>61.1</td>
+      <td>4.9671</td>
+      <td>2.0</td>
+      <td>242.0</td>
+      <td>17.8</td>
+      <td>392.83</td>
+      <td>4.03</td>
+      <td>34.7</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.03237</td>
+      <td>0.0</td>
+      <td>2.18</td>
+      <td>0.0</td>
+      <td>0.458</td>
+      <td>6.998</td>
+      <td>45.8</td>
+      <td>6.0622</td>
+      <td>3.0</td>
+      <td>222.0</td>
+      <td>18.7</td>
+      <td>394.63</td>
+      <td>2.94</td>
+      <td>33.4</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.06905</td>
+      <td>0.0</td>
+      <td>2.18</td>
+      <td>0.0</td>
+      <td>0.458</td>
+      <td>7.147</td>
+      <td>54.2</td>
+      <td>6.0622</td>
+      <td>3.0</td>
+      <td>222.0</td>
+      <td>18.7</td>
+      <td>396.90</td>
+      <td>5.33</td>
+      <td>36.2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>Here I load my data into the <em>df</em> variable and show the first 5 lines with the head command.</p>
+<p>We have information like crime of the region, average age of the population, etc ..
+Although it is not the focus of this post, the distribution of our data may cause our regressor to make it very difficult, so I will apply a simple feature engineering to make our distribution more normal, in future posts will be explained in detail what is feature engineering and how to use it to improve your predictions. First let's see how the distribution we want to predict next to the &quot;normalized&quot; distribution by \(log (x + 1)\), (adding one to the value avoids us having problems with zeros).</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">import </span><span>seaborn </span><span style="color:#b48ead;">as </span><span>sns
+</span><span style="color:#b48ead;">import </span><span>matplotlib.pyplot </span><span style="color:#b48ead;">as </span><span>plt
+</span><span>sns.</span><span style="color:#bf616a;">set</span><span>(</span><span style="color:#bf616a;">style</span><span>=&quot;</span><span style="color:#a3be8c;">whitegrid</span><span>&quot;, </span><span style="color:#bf616a;">palette</span><span>=&quot;</span><span style="color:#a3be8c;">coolwarm</span><span>&quot;)
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.plot.</span><span style="color:#bf616a;">box</span><span>(</span><span style="color:#bf616a;">figsize</span><span>=(</span><span style="color:#d08770;">10</span><span>,</span><span style="color:#d08770;">3</span><span>), </span><span style="color:#bf616a;">patch_artist</span><span>=</span><span style="color:#d08770;">True</span><span>);
+</span></code></pre>
+<img src="/images/output_5_0.svg" width=800px>
+<p>First I load the chart libraries that I will use throughout the text, set the style and color palette for the chart, then set up a <em>prices</em> dataframe to receive two columns of values, one with the price without transformation, the other with the transformed price by log1p (\(log(x + 1)\)) function.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>prices = pd.</span><span style="color:#bf616a;">DataFrame</span><span>({&quot;</span><span style="color:#a3be8c;">Price</span><span>&quot;:df[&quot;</span><span style="color:#a3be8c;">MEDV</span><span>&quot;], &quot;</span><span style="color:#a3be8c;">log(Price + 1)</span><span>&quot;:np.</span><span style="color:#bf616a;">log1p</span><span>(df[&quot;</span><span style="color:#a3be8c;">MEDV</span><span>&quot;])})
+</span><span>
+</span><span>prices.</span><span style="color:#bf616a;">hist</span><span>(</span><span style="color:#bf616a;">color</span><span>=&quot;</span><span style="color:#a3be8c;">#F1684E</span><span>&quot;, </span><span style="color:#bf616a;">bins</span><span>=</span><span style="color:#d08770;">50</span><span>, </span><span style="color:#bf616a;">figsize</span><span>=(</span><span style="color:#d08770;">10</span><span>,</span><span style="color:#d08770;">3</span><span>))
+</span><span>plt.</span><span style="color:#bf616a;">ylabel</span><span>(&quot;</span><span style="color:#a3be8c;">Amount</span><span>&quot;);
+</span></code></pre>
+<img src="/images/output_7_0.svg" width=800px>
+<p>We can see that our distribution has been less spaced and a little closer to a normal distribution, but Python has a statistical function that helps us evaluate whether this will be necessary or not, through the Box-Cox test that will have clues with the degree of skewness.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>scipy.stats </span><span style="color:#b48ead;">import </span><span>skew
+</span><span>
+</span><span style="color:#b48ead;">for </span><span>col </span><span style="color:#b48ead;">in </span><span>df.</span><span style="color:#bf616a;">keys</span><span>():
+</span><span>    sk = </span><span style="color:#bf616a;">skew</span><span>(df[col])
+</span><span>    </span><span style="color:#b48ead;">if </span><span>sk &gt; </span><span style="color:#d08770;">0.75</span><span>:
+</span><span>        </span><span style="color:#96b5b4;">print</span><span>(col, sk)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>CRIM 5.207652387859715
+</span><span>ZN 2.219063057148425
+</span><span>CHAS 3.395799292642519
+</span><span>DIS 1.0087787565152246
+</span><span>RAD 1.0018334924536951
+</span><span>LSTAT 0.9037707431346133
+</span><span>MEDV 1.104810822864635
+</span></code></pre>
+<h4 id="um-pouco-de-feature-engeneering">Um Pouco de Feature Engeneering</h4>
+<p>O teste de Box-Cox<sup class="footnote-reference"><a href="#5">2</a></sup> nos diz que um skew acima de 0.75 pode ser linearizado pela função log(x+1), fazendo a distribuição ficar mais normalizada, abaixo disso posso manter o valor como estava sem necessidades de modificação, vamos olhar o antes e depois de aplicar essa função a nossas distribuições. (Suprimi algumas variáveis para não poluir demais o gráfico).</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>dfnorm = (df - df.</span><span style="color:#bf616a;">mean</span><span>()) / (df.</span><span style="color:#bf616a;">std</span><span>())
+</span><span style="color:#b48ead;">for </span><span>x </span><span style="color:#b48ead;">in </span><span>[&quot;</span><span style="color:#a3be8c;">CRIM</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">ZN</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">CHAS</span><span>&quot;,&quot;</span><span style="color:#a3be8c;">MEDV</span><span>&quot;]:
+</span><span>    sns.</span><span style="color:#bf616a;">kdeplot</span><span>(dfnorm[x])
+</span><span>plt.</span><span style="color:#bf616a;">title</span><span>(&quot;</span><span style="color:#a3be8c;">Distrution Mean Value</span><span>&quot;)
+</span><span>plt.</span><span style="color:#bf616a;">xlabel</span><span>(&quot;</span><span style="color:#a3be8c;">Price</span><span>&quot;)
+</span><span>plt.</span><span style="color:#bf616a;">ylabel</span><span>(&quot;</span><span style="color:#a3be8c;">Amount</span><span>&quot;);
+</span></code></pre>
+<img src="/images/output_11_0.svg" width=800px>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">for </span><span>col </span><span style="color:#b48ead;">in </span><span>df.</span><span style="color:#bf616a;">keys</span><span>():
+</span><span>    sk = </span><span style="color:#bf616a;">skew</span><span>(df[col])
+</span><span>    </span><span style="color:#b48ead;">if </span><span>sk &gt; </span><span style="color:#d08770;">0.75</span><span>:
+</span><span>        df[col] = np.</span><span style="color:#bf616a;">log1p</span><span>(df[col])
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>dfnorm = (df - df.</span><span style="color:#bf616a;">mean</span><span>()) / (df.</span><span style="color:#bf616a;">std</span><span>())
+</span><span style="color:#b48ead;">for </span><span>x </span><span style="color:#b48ead;">in </span><span>[&quot;</span><span style="color:#a3be8c;">CRIM</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">ZN</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">CHAS</span><span>&quot;,&quot;</span><span style="color:#a3be8c;">MEDV</span><span>&quot;]:
+</span><span>    sns.</span><span style="color:#bf616a;">kdeplot</span><span>(dfnorm[x])
+</span><span>plt.</span><span style="color:#bf616a;">title</span><span>(&quot;</span><span style="color:#a3be8c;">Distribution Mean Value</span><span>&quot;)
+</span><span>plt.</span><span style="color:#bf616a;">xlabel</span><span>(&quot;</span><span style="color:#a3be8c;">Price</span><span>&quot;)
+</span><span>plt.</span><span style="color:#bf616a;">ylabel</span><span>(&quot;</span><span style="color:#a3be8c;">Amount</span><span>&quot;);
+</span></code></pre>
+<img src="/images/output_13_0.svg" width=800px>
+<p>Vemos que as distribuições ficaram muito mais centradas e tendendo a distribuição gaussiana<sup class="footnote-reference"><a href="#2">3</a></sup>, o que será excelente para o ajuste dos nossos estimadores<sup class="footnote-reference"><a href="#3">4</a></sup>. Sendo a função logarítmica e a função \(f.x+1\) bijetoras, poderemos retornar ao nosso valor original assim que acabarmos o ajuste do modelo.</p>
+<h4 id="simplificando-nossos-dados">Simplificando nossos dados</h4>
+<p>Nossos dados ainda podem estar muito complexos, a escala em que se encontram e talvez um excesso de informação necessária podem impossibilitar que nosso modelo atinja a perfeição. Aqui iremos aplicar duas técnicas, a primeira e escalonamento de variáveis pelo máximo-mínimo, transformação que também é reversível é poderá ser desfeita ao preço final, bastando eu guardar as variáveis da minha transformação.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.</span><span style="color:#bf616a;">std</span><span>()
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>CRIM         1.022731
+</span><span>ZN           1.620831
+</span><span>INDUS        6.860353
+</span><span>CHAS         0.176055
+</span><span>NOX          0.115878
+</span><span>RM           0.702617
+</span><span>AGE         28.148861
+</span><span>DIS          0.413390
+</span><span>RAD          0.751839
+</span><span>TAX        168.537116
+</span><span>PTRATIO      2.164946
+</span><span>B           91.294864
+</span><span>LSTAT        0.539033
+</span><span>MEDV         0.386966
+</span><span>dtype: float64
+</span></code></pre>
+<p>It is visible that some variables are extremely dispersed, we can change this with the following formula:</p>
+<p>$$ z_i=\frac{x_i-\min(x)}{\max(x)-\min(x)} $$</p>
+<p>Thus our variables will be between zero and one, making the prediction simpler.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>dfmin, dfmax = df.</span><span style="color:#bf616a;">min</span><span>(), df.</span><span style="color:#bf616a;">max</span><span>()
+</span><span>df = (df - df.</span><span style="color:#bf616a;">min</span><span>())/(df.</span><span style="color:#bf616a;">max</span><span>()-df.</span><span style="color:#bf616a;">min</span><span>())
+</span><span>df.</span><span style="color:#bf616a;">std</span><span>()
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>CRIM       0.227615
+</span><span>ZN         0.351200
+</span><span>INDUS      0.251479
+</span><span>CHAS       0.253994
+</span><span>NOX        0.238431
+</span><span>RM         0.134627
+</span><span>AGE        0.289896
+</span><span>DIS        0.227300
+</span><span>RAD        0.297672
+</span><span>TAX        0.321636
+</span><span>PTRATIO    0.230313
+</span><span>B          0.230205
+</span><span>LSTAT      0.202759
+</span><span>MEDV       0.180819
+</span><span>dtype: float64
+</span></code></pre>
+<p>Great!!</p>
+<h4 id="all-ready">All ready</h4>
+<p>Finished our data tuning after so much work we are now going to adjust our models, get used to it, handling the data is what will consume you most time in a machine learning process. But finally let's take a final look at how they got distributed. I will use the internal function of Pandas, boxplot, if you have any doubt what this chart represents, see <a href="https://en.wikipedia.org/wiki/Box_plot">here</a>.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>df.plot.</span><span style="color:#bf616a;">box</span><span>(</span><span style="color:#bf616a;">figsize</span><span>=(</span><span style="color:#d08770;">10</span><span>,</span><span style="color:#d08770;">3</span><span>), </span><span style="color:#bf616a;">patch_artist</span><span>=</span><span style="color:#d08770;">True</span><span>);
+</span></code></pre>
+<img src="/images/output_19_0.svg" width=800px>
+<p>As already discussed in other posts, we should separate the data into a training and testing set, to train our model and to know how well our model will predict for unknown cases. Read <a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">this article</a> for a better understanding.</p>
+<p>Here we use Scikit-Learn's built-in function to separate data, for additional information on all of the function variables below I suggest consulting the <a href="http://scikit-learn.org/stable/documentation.html">official documentation</a>. As the first argument I pass my X, attributes, and the second argument my y, the value I want to predict, finally I pass an integer to make my results reproducible by making the random processes of functions nonrandom.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>sklearn.model_selection </span><span style="color:#b48ead;">import </span><span>train_test_split
+</span><span>xtrain, xtest, ytrain, ytest =\
+</span><span>    </span><span style="color:#bf616a;">train_test_split</span><span>(df.</span><span style="color:#bf616a;">drop</span><span>(&#39;</span><span style="color:#a3be8c;">MEDV</span><span>&#39;,</span><span style="color:#d08770;">1</span><span>).values, df[&#39;</span><span style="color:#a3be8c;">MEDV</span><span>&#39;].values, </span><span style="color:#bf616a;">random_state</span><span>=</span><span style="color:#d08770;">201</span><span>)
+</span></code></pre>
+<p>Now we will import our two models, the first one being XGBoost, an algorithm that has been proving extremely efficient in competitions and the famous Ridge regression algorithm. We will evaluate our models by <a href="https://en.wikipedia.org/wiki/Mean_squared_error">square mean error</a>.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>lightgbm </span><span style="color:#b48ead;">import </span><span>LGBMRegressor
+</span><span style="color:#b48ead;">from </span><span>sklearn.linear_model </span><span style="color:#b48ead;">import </span><span>Ridge
+</span><span style="color:#b48ead;">from </span><span>sklearn.metrics </span><span style="color:#b48ead;">import </span><span>mean_squared_error
+</span><span style="color:#b48ead;">from </span><span>sklearn.model_selection </span><span style="color:#b48ead;">import </span><span>GridSearchCV
+</span></code></pre>
+<p>Here I perform a slight improvement on the hyperparameters with GridSearchCV to look for the combination of the hyperparameters that will give me a better prediction, then I adjust my model to the data and having it train, I predict data it doesn't know, then evaluate the model performance as said.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>params = {&#39;</span><span style="color:#a3be8c;">alpha</span><span>&#39;: np.</span><span style="color:#bf616a;">linspace</span><span>(</span><span style="color:#d08770;">0.1</span><span>,</span><span style="color:#d08770;">1</span><span>,</span><span style="color:#d08770;">200</span><span>),
+</span><span>          &#39;</span><span style="color:#a3be8c;">random_state</span><span>&#39;:[</span><span style="color:#d08770;">2020</span><span>]}
+</span><span>
+</span><span>model1 = </span><span style="color:#bf616a;">GridSearchCV</span><span>(</span><span style="color:#bf616a;">estimator </span><span>= </span><span style="color:#bf616a;">Ridge</span><span>(), </span><span style="color:#bf616a;">param_grid </span><span>= params, </span><span style="color:#bf616a;">cv</span><span>=</span><span style="color:#d08770;">5</span><span>)
+</span><span>model1.</span><span style="color:#bf616a;">fit</span><span>(xtrain,ytrain)
+</span><span>linpred = model1.</span><span style="color:#bf616a;">predict</span><span>(xtest)
+</span><span>
+</span><span>err1 = </span><span style="color:#bf616a;">mean_squared_error</span><span>(linpred, ytest)
+</span><span style="color:#96b5b4;">print</span><span>(err1)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>0.00745856883004946
+</span></code></pre>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>params = {&#39;</span><span style="color:#a3be8c;">reg_alpha</span><span>&#39;: np.</span><span style="color:#bf616a;">linspace</span><span>(</span><span style="color:#d08770;">0</span><span>,</span><span style="color:#d08770;">1</span><span>,</span><span style="color:#d08770;">10</span><span>),
+</span><span>          &#39;</span><span style="color:#a3be8c;">gamma</span><span>&#39;: np.</span><span style="color:#bf616a;">linspace</span><span>(</span><span style="color:#d08770;">0</span><span>,</span><span style="color:#d08770;">1</span><span>,</span><span style="color:#d08770;">1</span><span>),
+</span><span>          &#39;</span><span style="color:#a3be8c;">reg_lambda</span><span>&#39;: np.</span><span style="color:#bf616a;">linspace</span><span>(</span><span style="color:#d08770;">0</span><span>,</span><span style="color:#d08770;">1</span><span>,</span><span style="color:#d08770;">1</span><span>)}
+</span><span>
+</span><span>model2 = </span><span style="color:#bf616a;">GridSearchCV</span><span>(</span><span style="color:#bf616a;">estimator </span><span>= </span><span style="color:#bf616a;">LGBMRegressor</span><span>(), </span><span style="color:#bf616a;">param_grid </span><span>= params, </span><span style="color:#bf616a;">cv</span><span>=</span><span style="color:#d08770;">5</span><span>)
+</span><span>model2.</span><span style="color:#bf616a;">fit</span><span>(xtrain, ytrain)
+</span><span>lgbmpred = model2.</span><span style="color:#bf616a;">predict</span><span>(xtest)
+</span><span>
+</span><span>err2 = </span><span style="color:#bf616a;">mean_squared_error</span><span>(lgbmpred, ytest)
+</span><span style="color:#96b5b4;">print</span><span>(err2)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>0.005040440132637956
+</span></code></pre>
+<p>Very good results, but can we make them even better?! Let's look at whether our predictions have a low correlation.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>predictions = pd.</span><span style="color:#bf616a;">DataFrame</span><span>({&quot;</span><span style="color:#a3be8c;">LightGBM</span><span>&quot;:np.</span><span style="color:#bf616a;">expm1</span><span>(lgbmpred), &quot;</span><span style="color:#a3be8c;">Ridge</span><span>&quot;:np.</span><span style="color:#bf616a;">expm1</span><span>(linpred)})
+</span><span>predictions.</span><span style="color:#bf616a;">plot</span><span>(</span><span style="color:#bf616a;">x </span><span>= &quot;</span><span style="color:#a3be8c;">LightGBM</span><span>&quot;, </span><span style="color:#bf616a;">y </span><span>= &quot;</span><span style="color:#a3be8c;">Ridge</span><span>&quot;, </span><span style="color:#bf616a;">kind </span><span>= &quot;</span><span style="color:#a3be8c;">scatter</span><span>&quot;, </span><span style="color:#bf616a;">color</span><span>=&quot;</span><span style="color:#a3be8c;">#85C8DD</span><span>&quot;);
+</span></code></pre>
+<img src="/images/output_28_0.svg" width=800px>
+<p>As already explained, a low correlation tends to significantly improve our prediction, visually we have something significant, let's look at that now in numbers.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>scipy </span><span style="color:#b48ead;">import </span><span>stats
+</span><span style="color:#bf616a;">_</span><span>, </span><span style="color:#bf616a;">_</span><span>, r_value, </span><span style="color:#bf616a;">_</span><span>, std_err = stats.</span><span style="color:#bf616a;">linregress</span><span>(np.</span><span style="color:#bf616a;">expm1</span><span>(lgbmpred),np.</span><span style="color:#bf616a;">expm1</span><span>(linpred))
+</span><span style="color:#96b5b4;">print</span><span>(r_value, std_err)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>0.9193021766109413 0.03313351573076193
+</span></code></pre>
+<p>Because our r-value is not too high (&lt;.95), we can benefit from the combination of estimates. We get to the initial motivation part of combining models to increase predictive performance. I will test 3 combinations of predictions, weighted mean, simple mean, and harmonic mean.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>err3 = </span><span style="color:#bf616a;">mean_squared_error</span><span>(lgbmpred * </span><span style="color:#d08770;">0.8 </span><span>+ linpred * </span><span style="color:#d08770;">0.2</span><span>, ytest) </span><span style="color:#65737e;"># weighted mean
+</span><span>err4 = </span><span style="color:#bf616a;">mean_squared_error</span><span>((lgbmpred + linpred)/</span><span style="color:#d08770;">2</span><span>, ytest) </span><span style="color:#65737e;"># mean
+</span><span>err5 = </span><span style="color:#bf616a;">mean_squared_error</span><span>(stats.</span><span style="color:#bf616a;">hmean</span><span>([lgbmpred, linpred]), ytest) </span><span style="color:#65737e;"># harmonic mean
+</span><span style="color:#96b5b4;">print</span><span>(err3, err4, err5)
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>0.004830881999425605 0.005166404680258313 0.004927370731820139
+</span></code></pre>
+<p>Excelente, ouve uma melhora significativa, mas o quão significativa?</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#d08770;">1</span><span>-err3/err2
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>0.041575363995579706
+</span></code></pre>
+<p>That's right, a 4% improvement from our best estimator, quite significant for something so simple, and such improvements over high performance algorithms are of utmost importance in the data science world, perhaps even help us jump thousands of positions towards top in a competition worth $ 1.2 million <sup class="footnote-reference"><a href="#4">5</a></sup>.</p>
+<h3 id="concluding">Concluding</h3>
+<p>The main purpose of this publication was to demonstrate that a simple combination of two models can significantly impact their prediction, but during this process I did some data treatment that will impress you on the impact of reducing our error, try evaluating the models without performing some of the treatments I gave to the data ... In future publications, more will be explained about each technique seen here.</p>
+<h4 id="references">References</h4>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>Polikar, R. (2006). &quot;Ensemble based systems in decision making&quot;. IEEE Circuits and Systems Magazine. 6 (3): 21–45. doi:10.1109/MCAS.2006.1688199</p>
+</div>
+<div class="footnote-definition" id="2"><sup class="footnote-definition-label">3</sup>
+<p>https://stats.stackexchange.com/questions/298/in-linear-regression-when-is-it-appropriate-to-use-the-log-of-an-independent-va</p>
+</div>
+<div class="footnote-definition" id="3"><sup class="footnote-definition-label">4</sup>
+<p>https://stats.stackexchange.com/questions/18844/when-and-why-should-you-take-the-log-of-a-distribution-of-numbers</p>
+</div>
+<div class="footnote-definition" id="4"><sup class="footnote-definition-label">5</sup>
+<p>https://www.kaggle.com/c/zillow-prize-1</p>
+</div>
+<div class="footnote-definition" id="5"><sup class="footnote-definition-label">2</sup>
+<p>http://www.itl.nist.gov/div898/handbook/eda/section3/eda336.htm</p>
+</div>
+<p><a href="https://en.wikipedia.org/wiki/Inverse-variance_weighting">Inverse Variance</a></p>
+<p><a href="https://en.wikipedia.org/wiki/Bootstrap_aggregating">Bootstrap_aggregating Wikipedia</a></p>
+<p><a href="https://www.kaggle.com/apapiu/regularized-linear-models">Regularized Linear Models Kernel</a></p>
+
+
+        </div>
+        <div id="footer">
+            Jader Martins - 2021
+        </div>
+    </body>
+</html>

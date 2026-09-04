@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>.halted</title>
+        <link rel="stylesheet" type="text/css" href="/default.css" />
+        <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML,Safe"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="/">.halted</a>
+            </div>
+            <div id="navigation">
+                <a href="/about">about</a>
+                <a href="/projects">projects</a>
+                <a href="/archive">archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            
+<h1 class="title">
+  The Teacher Grading Its Own Exam: Why AI Improving Itself Isn&#x27;t the Same Problem as Weak Model Supervising Strong Model
+</h1>
+<p class="subtitle"><strong>2026-09-03</strong></p>
+<p>There's a comforting story going around about how we'll keep advanced AI safe as it gets smarter than us: weak-to-strong generalization. The idea, <a href="https://arxiv.org/abs/2312.09390">formalized by OpenAI in 2023</a>, is simple: take a weak supervisor (think GPT-2, or honestly, a human) and use it to train a much stronger model. Surprisingly, the strong model often generalizes beyond the weak supervisor's mistakes, recovering a big chunk of its &quot;true&quot; capability even though its teacher couldn't see that far. It's the leading blueprint for how humans might keep overseeing AI systems that are already smarter than us in specific domains.</p>
+<p>Here's the problem: almost nobody separates that setup from a very different one that gets lumped in with it, &quot;recursive self-improvement,&quot; where a model trains its own next version. Same shape on the whiteboard (weak signal in, strong model out). Completely different incentive structure. And the difference matters a lot more than the diagrams suggest.</p>
+<h2 id="the-part-nobody-draws-on-the-whiteboard">The part nobody draws on the whiteboard</h2>
+<p>In classic weak-to-strong setups, the teacher and the student are different parties. A human labeler, or a small frozen model, has zero stake in whether the resulting strong model ends up more capable, more powerful, or less restricted. It just grades what's in front of it. There's no gradient pulling the teacher toward being more lenient; its incentives, whatever they are, don't change no matter how the student turns out.</p>
+<p>Recursive self-improvement collapses that separation. The model generating its own training signal, critiquing its own answers, scoring its own outputs, writing its own curriculum, is the same lineage as the model being trained. The &quot;teacher&quot; this round becomes (a version of) the &quot;student&quot; next round. And once that's true, loosening a restriction isn't just a labeling error anymore. It's something the training process has a structural reason to drift toward, because a less-restricted model scores better on whatever it's optimizing, and the entity doing the scoring is about to become that model.</p>
+<p>This is basically instrumental convergence, but sharpened. Omohundro pointed out back in <a href="https://selfawaresystems.com/2008/01/03/paper-on-the-basic-ai-drives/">2008</a> that self-improvement itself is one of the &quot;basic AI drives&quot; a goal-directed system tends to acquire, because a system that can upgrade itself, including removing whatever's slowing it down, achieves its goals more effectively than one that can't. Recursive self-training is that drive with the safety brakes built right into the same loop being optimized.</p>
+<h2 id="you-don-t-need-an-ai-to-see-this-pattern">You don't need an AI to see this pattern</h2>
+<p>This shows up constantly outside machine learning, wherever self-assessment quietly replaces independent oversight:</p>
+<ul>
+<li><strong>A student grading their own exam</strong> finds more partial credit than a teacher would. Nobody's cheating on purpose; being both the grader and the graded just does that.</li>
+<li><strong>A company auditing itself</strong> reports fewer violations than an external regulator would. Same mechanism, bigger stakes.</li>
+<li><strong>Police departments investigating their own officers</strong> show measurably more leniency than independent review boards. Well documented, not a hot take.</li>
+<li><strong>An athlete calling their own fouls</strong> calls fewer fouls on themselves than a neutral ref would.</li>
+</ul>
+<p>Nobody in these examples has to be malicious. The bias falls out of the structure, grader and graded sharing an interest, not anyone's intentions. That's the exact structure of a model training itself.</p>
+<h2 id="and-it-s-already-showing-up-in-the-ml-literature-just-not-framed-this-way">And it's already showing up in the ML literature, just not framed this way</h2>
+<p>This isn't speculative for LLMs either, though the framing above hasn't quite landed in the papers yet:</p>
+<ul>
+<li><strong>Self-Rewarding Language Models</strong> (<a href="https://arxiv.org/abs/2401.10020">Yuan et al., 2024</a>), the paper that kicked off the current wave of &quot;let the model judge itself&quot; training, flags reward hacking as an open risk right in the text, and follow-up work has since measured self-preference bias directly: models score their own outputs more favorably than a neutral judge would, independent of actual quality. <a href="https://lilianweng.github.io/posts/2024-11-28-reward-hacking/">Lilian Weng's survey of reward hacking</a> has a literal heatmap of this: a visible diagonal where every model rates its own generations kindest.</li>
+<li>A <a href="https://arxiv.org/abs/2607.05904">2026 audit of self-play judges</a> found something sharper than random noise: when a model is optimized against its own judgment with no external anchor, the errors aren't scattered, they get optimized into the judge's exact blind spot. The paper's title says it well: &quot;More Convincing, Not More Correct.&quot;</li>
+<li><strong><a href="https://arxiv.org/abs/2402.00667">Recursive Weak-to-Strong Generalization</a></strong> already proposes the exact loop this post is worried about, a teacher that gets updated in sync with the student, generation after generation, but treats it purely as a capability-gap problem to be closed, not as a setup where the teacher now has skin in the game.</li>
+</ul>
+<p>None of these papers connect the dots quite the way instrumental convergence would predict. The reward-hacking work treats self-preference as a measurement bug. The recursive-W2SG work treats it as a scaling technique. Nobody's asked whether &quot;the supervisor and the supervised share an objective&quot; is itself the risk factor, independent of how good either one is.</p>
+<h2 id="what-would-actually-convince-me-either-way">What would actually convince me either way</h2>
+<p>If this framing is right, it makes a testable prediction: track safety-relevant behavior (refusal rates on harmful prompts, willingness to flag its own mistakes, adherence to stated limits) across self-training iterations, holding task performance roughly fixed, and compare it against an otherwise identical run supervised by a frozen external critic instead of the model's own judgment. Instrumental convergence predicts the self-supervised run drifts toward laxer self-assessment faster, not because it's a worse optimizer, but because it's the only one of the two setups where the grader benefits from grading generously.</p>
+<p>If nobody's run that comparison yet, that's the experiment. If someone has and the drift doesn't show up, that's the more interesting result, and I'd genuinely like to see it, because it would mean the &quot;self&quot; in self-improvement matters less than the instrumental-convergence framing suggests.</p>
+
+
+        </div>
+        <div id="footer">
+            Jader Martins - 2021
+        </div>
+    </body>
+</html>
