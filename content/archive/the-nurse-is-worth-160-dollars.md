@@ -3,13 +3,13 @@ title = "The Nurse Is Worth $160: On Confusing a Price Tag With a Pile of Stuff"
 date = 2026-09-04
 +++
 
-Take a nurse. Break her down into elements and price the result: oxygen, carbon, hydrogen, nitrogen, some calcium and phosphorus, trace iron. [Estimates vary](https://www.sciencefocus.com/the-human-body/how-much-money-is-a-human-body) with how you count — about $160 at commodity prices, up to roughly $150,000 if you insist on pharmaceutical purity. Call it $160. That is her material value: everything she is made of, at market.
+*context:* A great fortune gets reported as a single number — $80 billion — and a certain kind of argument writes itself from there: take it, move it, hand it to people who need it, as though the figure named a vault you could walk into and empty. Even the pushback usually grants the picture and just resists the plan — *it's their money*, *they earned it* — as if the disagreement were only about whether to move the pile, not about whether it's a pile at all. The serious tax proposals are more careful than that. The slogans on both sides aren't.
+
+*analogy:* Take a nurse. Break her down into elements and price the result: oxygen, carbon, hydrogen, nitrogen, some calcium and phosphorus, trace iron. [Estimates vary](https://www.sciencefocus.com/the-human-body/how-much-money-is-a-human-body) with how you count — about $160 at commodity prices, up to roughly $150,000 if you insist on pharmaceutical purity. Call it $160. That is her material value: everything she is made of, at market.
 
 Now ask what she is worth over the next ten years. At the US median registered-nurse wage of [$97,550](https://www.bls.gov/ooh/healthcare/registered-nurses.htm), a decade of work discounted at 5% is about $750,000 in present value — and that's a floor, not a ceiling, because wages capture only the slice she can bargain for. The patients who don't die, the errors caught at 3am that never become incidents: none of it reaches her paycheck. Price avoided deaths the way regulators do, at a [value of a statistical life](https://www.epa.gov/environmental-economics/mortality-risk-valuation) of $7-10 million, and one prevented death in a decade dwarfs her entire salary line.
 
-Nobody defends the $160. The material composition is obviously, insultingly, the wrong frame.
-
-And yet it is exactly the frame a lot of public argument about fortunes runs on.
+Nobody defends the $160. The material composition is obviously, insultingly, the wrong frame — you cannot harvest the nurse's $750,000 by liquidating the nurse. And yet the $160 move, pricing the pile you would be left holding if you took the thing apart today, is exactly the one a lot of public argument about fortunes runs on.
 
 ## Stock, flow, and the thing in between
 
