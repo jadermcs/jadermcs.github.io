@@ -13,7 +13,7 @@ It is hard to deny that some people have "skin in the game" and may benefit from
 
 ## Every lab is now racing to build the most powerful virus ever seen
 
-Imagine that every serious research lab in the world has decided, at the same time, to build the most powerful virus humanity has ever encountered. Not to contain one. To make one. The pitch is genuinely appealing: a construct this capable could rewrite our biology for the better, end aging, clear out the diseases we have never managed to cure, grow food where nothing grows now. The upside is real, and the people making the pitch are not lying about it.
+Imagine that every serious research lab in the world has decided, at the same time, to build the most powerful virus humanity has ever encountered. Not to contain one. To make one. The pitch is genuinely appealing: a construct this capable could rewrite our biology for the better, [push back aging](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10909732/), [clear out diseases we could not otherwise cure](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7854298/), [grow food where crops now fail](https://www.darpa.mil/research/programs/insect-allies). The upside is real, and the people making the pitch are not lying about it.
 
 But "the most powerful virus ever built" and "a virus that does exactly what we intended" are not the same sentence. The more capable the thing is, the more of its behavior lives outside the part we designed and tested. A construct powerful enough to solve problems we could not solve ourselves is, by definition, doing things we did not fully specify, and some of those things we will not like. The same capability that makes it useful is what makes its failure modes hard to predict and hard to bound. The promise and the threat are the same object.
 
@@ -35,6 +35,9 @@ AI is just [a machine trying to reach its objective](https://people.eecs.berkele
 
 ## References
 
+- Carolina Cano Macip et al., ["Gene Therapy-Mediated Partial Reprogramming Extends Lifespan and Reverses Age-Related Changes in Aged Mice"](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10909732/), *Cellular Reprogramming*, 2024 — anti-aging effects from an AAV-delivered OSK system.
+- Jerry R. Mendell et al., ["Current Clinical Applications of In Vivo Gene Therapy with AAVs"](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7854298/), *Molecular Therapy*, 2021 — review covering FDA-approved AAV therapies such as Luxturna and Zolgensma.
+- DARPA, ["Insect Allies"](https://www.darpa.mil/research/programs/insect-allies) — program using insect-borne plant viruses to deliver protective traits to crops in a single season; see also ["Crop-protecting insects could be turned into bioweapons, critics warn"](https://www.science.org/content/article/crop-protecting-insects-could-be-turned-bioweapons-critics-warn), *Science*, 2018.
 - Norbert Wiener, ["Some Moral and Technical Consequences of Automation"](https://www.science.org/doi/10.1126/science.131.3410.1355), *Science*, 1960.
 - I. J. Good, ["Speculations Concerning the First Ultraintelligent Machine"](https://philpapers.org/rec/GOOSCT), 1965.
 - Stuart Russell, ["Human-Compatible Artificial Intelligence"](https://people.eecs.berkeley.edu/~russell/papers/mi19book-hcai.pdf), 2019 — on the "standard model" of a machine optimizing a fixed objective.
