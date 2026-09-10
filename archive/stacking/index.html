@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>.halted</title>
+        <link rel="stylesheet" type="text/css" href="/default.css" />
+        <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML,Safe"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="/">.halted</a>
+            </div>
+            <div id="navigation">
+                <a href="/about">about</a>
+                <a href="/projects">projects</a>
+                <a href="/archive">archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            
+<h1 class="title">
+  Stacked Generalization
+</h1>
+<p class="subtitle"><strong>2019-04-22</strong></p>
+<p>Introduced by Wolpert in 1992<sup class="footnote-reference"><a href="#1">1</a></sup>, this generalization technique consists of combining nonlinear estimators to correct their biases to a given training set, adding their capabilities for better prediction<sup class="footnote-reference"><a href="#2">2</a></sup>.</p>
+<img src="/images/stacking.png" width=600px class="center">
+<p>In a <a href="/posts/Linear-Ensemble.html">previous post</a> I presented the linear combination of estimators, in it we adjusted \(N\) models to a \(D\) dataset and a priori we defined \(W\) weights for them by combining into one summation:</p>
+<p>$$\sum_{i=1}^{N} w_{i}M_{i}$$</p>
+<p>$$\text{given a priori} \ W = (w_1,w_2,...w_N) \ \text{and} \sum W = 1$$</p>
+<p>With this the weighted average of the predictions in general will be less biased for certain regions and may generalize more, but this method has two limitations, the weights cannot be changed after verifying the performance (if we would not be acting as a meta-estimator in test data) and is an extremely simple combination, not leveraging the strengths of the \(M\) estimators for certain regions.</p>
+<p>Wolpert then proposes an alternative to this, what if we make \(W\) pesos a learning problem? or rather, not only learn how to combine our predictions but also combine them nonlinearly using a meta estimator?</p>
+<p>Meta estimators are those who use base models to combine them or select them to improve on a performance metric, for example you reader when deciding between using a random forest or a logistic regression to predict your model you are being a meta estimator. But here the problem of generalization arises, if you continue to improve your regression or rforest you may end up overfitting the data and not being able to generalize, here then it is necessary to apply cross validation techniques to select the model, the same will happen for the stacking.</p>
+<p>For stacking it is ideal that the dataset is relatively large, the author's advice is at least one thousand records. We start our example by loading a relatively large dataset, 20,000 records, this dataset has as characteristic attributes of california houses and as a target value its price, the data is already normalized and we will not make any changes to it.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>sklearn.datasets </span><span style="color:#b48ead;">import </span><span>fetch_california_housing
+</span><span style="color:#b48ead;">from </span><span>sklearn.model_selection </span><span style="color:#b48ead;">import </span><span>train_test_split
+</span><span style="color:#b48ead;">import </span><span>pandas </span><span style="color:#b48ead;">as </span><span>pd
+</span><span>
+</span><span>dataset = </span><span style="color:#bf616a;">fetch_california_housing</span><span>()
+</span><span>df = pd.</span><span style="color:#bf616a;">DataFrame</span><span>(</span><span style="color:#bf616a;">data</span><span>=dataset.data, </span><span style="color:#bf616a;">columns</span><span>=dataset.feature_names)
+</span><span>df[&#39;</span><span style="color:#a3be8c;">Price</span><span>&#39;] = dataset.target
+</span><span>df.</span><span style="color:#bf616a;">head</span><span>()
+</span></code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>.dataframe tbody tr th {
+</span><span>    vertical-align: top;
+</span><span>}
+</span><span>
+</span><span>.dataframe thead th {
+</span><span>    text-align: right;
+</span><span>}
+</span></code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MedInc</th>
+      <th>HouseAge</th>
+      <th>AveRooms</th>
+      <th>AveBedrms</th>
+      <th>Population</th>
+      <th>AveOccup</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>8.3252</td>
+      <td>41.0</td>
+      <td>6.984127</td>
+      <td>1.023810</td>
+      <td>322.0</td>
+      <td>2.555556</td>
+      <td>37.88</td>
+      <td>-122.23</td>
+      <td>4.526</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>8.3014</td>
+      <td>21.0</td>
+      <td>6.238137</td>
+      <td>0.971880</td>
+      <td>2401.0</td>
+      <td>2.109842</td>
+      <td>37.86</td>
+      <td>-122.22</td>
+      <td>3.585</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>7.2574</td>
+      <td>52.0</td>
+      <td>8.288136</td>
+      <td>1.073446</td>
+      <td>496.0</td>
+      <td>2.802260</td>
+      <td>37.85</td>
+      <td>-122.24</td>
+      <td>3.521</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>5.6431</td>
+      <td>52.0</td>
+      <td>5.817352</td>
+      <td>1.073059</td>
+      <td>558.0</td>
+      <td>2.547945</td>
+      <td>37.85</td>
+      <td>-122.25</td>
+      <td>3.413</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>3.8462</td>
+      <td>52.0</td>
+      <td>6.281853</td>
+      <td>1.081081</td>
+      <td>565.0</td>
+      <td>2.181467</td>
+      <td>37.85</td>
+      <td>-122.25</td>
+      <td>3.422</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>Here we separate into training and testing in a (pseudo) random way to finally evaluate performance.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>xtrain, xtest, ytrain, ytest =\
+</span><span>    </span><span style="color:#bf616a;">train_test_split</span><span>(df.</span><span style="color:#bf616a;">drop</span><span>(&#39;</span><span style="color:#a3be8c;">Price</span><span>&#39;, </span><span style="color:#bf616a;">axis</span><span>=</span><span style="color:#d08770;">1</span><span>), df.Price, </span><span style="color:#bf616a;">test_size</span><span>=</span><span style="color:#d08770;">.3</span><span>,
+</span><span>                     </span><span style="color:#bf616a;">random_state</span><span>=</span><span style="color:#d08770;">42</span><span>)
+</span><span>xtrain.</span><span style="color:#bf616a;">head</span><span>()
+</span></code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>.dataframe tbody tr th {
+</span><span>    vertical-align: top;
+</span><span>}
+</span><span>
+</span><span>.dataframe thead th {
+</span><span>    text-align: right;
+</span><span>}
+</span></code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MedInc</th>
+      <th>HouseAge</th>
+      <th>AveRooms</th>
+      <th>AveBedrms</th>
+      <th>Population</th>
+      <th>AveOccup</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7061</td>
+      <td>4.1312</td>
+      <td>35.0</td>
+      <td>5.882353</td>
+      <td>0.975490</td>
+      <td>1218.0</td>
+      <td>2.985294</td>
+      <td>33.93</td>
+      <td>-118.02</td>
+    </tr>
+    <tr>
+      <td>14689</td>
+      <td>2.8631</td>
+      <td>20.0</td>
+      <td>4.401210</td>
+      <td>1.076613</td>
+      <td>999.0</td>
+      <td>2.014113</td>
+      <td>32.79</td>
+      <td>-117.09</td>
+    </tr>
+    <tr>
+      <td>17323</td>
+      <td>4.2026</td>
+      <td>24.0</td>
+      <td>5.617544</td>
+      <td>0.989474</td>
+      <td>731.0</td>
+      <td>2.564912</td>
+      <td>34.59</td>
+      <td>-120.14</td>
+    </tr>
+    <tr>
+      <td>10056</td>
+      <td>3.1094</td>
+      <td>14.0</td>
+      <td>5.869565</td>
+      <td>1.094203</td>
+      <td>302.0</td>
+      <td>2.188406</td>
+      <td>39.26</td>
+      <td>-121.00</td>
+    </tr>
+    <tr>
+      <td>15750</td>
+      <td>3.3068</td>
+      <td>52.0</td>
+      <td>4.801205</td>
+      <td>1.066265</td>
+      <td>1526.0</td>
+      <td>2.298193</td>
+      <td>37.77</td>
+      <td>-122.45</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>We now load cross-validation specifically into <a href="https://scikit-learn.org/stable/modules/cross_validation.html#k-fold">KFold</a> so that we don't &quot;lose&quot; a lot of data, and the templates that will be used , here there is no rule of thumb about the base models, it is up to you, but for the meta-estimator is usually applied boosting trees. Here I arbitrarily chose <a href="https://scikit-learn.org/stable/modules/neighbors.html#nearest-neighbors-regression">kNN</a> and <a href="https://scikit-learn.org/stable/modules/linear_model.html#elastic-net">ElasticNet</a>, but as a meta-estimator I will use <a href="https://xgboost.readthedocs.io/en/latest/tutorials/model.html">xgboost</a>.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>sklearn.linear_model </span><span style="color:#b48ead;">import </span><span>ElasticNet
+</span><span style="color:#b48ead;">from </span><span>sklearn.neighbors </span><span style="color:#b48ead;">import </span><span>KNeighborsRegressor
+</span><span style="color:#b48ead;">from </span><span>sklearn.model_selection </span><span style="color:#b48ead;">import </span><span>KFold
+</span><span>
+</span><span style="color:#b48ead;">from </span><span>xgboost </span><span style="color:#b48ead;">import </span><span>XGBRFRegressor
+</span><span>
+</span><span>en = </span><span style="color:#bf616a;">ElasticNet</span><span>()
+</span><span>knn = </span><span style="color:#bf616a;">KNeighborsRegressor</span><span>()
+</span><span style="color:#65737e;"># we will early stop to not overfit
+</span><span>gbm = </span><span style="color:#bf616a;">XGBRFRegressor</span><span>(</span><span style="color:#bf616a;">n_jobs</span><span>=-</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#bf616a;">objective</span><span>=&#39;</span><span style="color:#a3be8c;">reg:squarederror</span><span>&#39;)
+</span></code></pre>
+<p>Now the creation of the stacked attributes begins, to make sure that there are no biases and we don't have little data to train the meta-estimator we create them by kfolds, being generated the training and test subsets, we train the model in the training set and we predict the value for the test set as follows:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>kf = </span><span style="color:#bf616a;">KFold</span><span>(</span><span style="color:#d08770;">20</span><span>, </span><span style="color:#bf616a;">shuffle</span><span>=</span><span style="color:#d08770;">True</span><span>)
+</span><span>xtrain[&#39;</span><span style="color:#a3be8c;">en</span><span>&#39;] = </span><span style="color:#d08770;">0
+</span><span style="color:#b48ead;">for </span><span>train_index, test_index </span><span style="color:#b48ead;">in </span><span>kf.</span><span style="color:#bf616a;">split</span><span>(xtrain):
+</span><span>    en.</span><span style="color:#bf616a;">fit</span><span>(xtrain.iloc[train_index, :-</span><span style="color:#d08770;">1</span><span>], ytrain.iloc[train_index])
+</span><span>    xtrain.iloc[test_index,</span><span style="color:#d08770;">8</span><span>] = en.</span><span style="color:#bf616a;">predict</span><span>(xtrain.iloc[test_index, :-</span><span style="color:#d08770;">1</span><span>])
+</span></code></pre>
+<p>We do the same for the other model.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>kf = </span><span style="color:#bf616a;">KFold</span><span>(</span><span style="color:#d08770;">20</span><span>, </span><span style="color:#bf616a;">shuffle</span><span>=</span><span style="color:#d08770;">True</span><span>)
+</span><span>xtrain[&#39;</span><span style="color:#a3be8c;">knn</span><span>&#39;] = </span><span style="color:#d08770;">0
+</span><span>
+</span><span style="color:#b48ead;">for </span><span>train_index, test_index </span><span style="color:#b48ead;">in </span><span>kf.</span><span style="color:#bf616a;">split</span><span>(xtrain):
+</span><span>    knn.</span><span style="color:#bf616a;">fit</span><span>(xtrain.iloc[train_index, :-</span><span style="color:#d08770;">2</span><span>], ytrain.iloc[train_index])
+</span><span>    xtrain.iloc[test_index,</span><span style="color:#d08770;">9</span><span>] = knn.</span><span style="color:#bf616a;">predict</span><span>(xtrain.iloc[test_index, :-</span><span style="color:#d08770;">2</span><span>])
+</span><span>
+</span><span>xtrain.</span><span style="color:#bf616a;">head</span><span>()
+</span></code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>.dataframe tbody tr th {
+</span><span>    vertical-align: top;
+</span><span>}
+</span><span>
+</span><span>.dataframe thead th {
+</span><span>    text-align: right;
+</span><span>}
+</span></code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MedInc</th>
+      <th>HouseAge</th>
+      <th>AveRooms</th>
+      <th>AveBedrms</th>
+      <th>Population</th>
+      <th>AveOccup</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>en</th>
+      <th>knn</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>7061</td>
+      <td>4.1312</td>
+      <td>35.0</td>
+      <td>5.882353</td>
+      <td>0.975490</td>
+      <td>1218.0</td>
+      <td>2.985294</td>
+      <td>33.93</td>
+      <td>-118.02</td>
+      <td>2.208931</td>
+      <td>2.108000</td>
+    </tr>
+    <tr>
+      <td>14689</td>
+      <td>2.8631</td>
+      <td>20.0</td>
+      <td>4.401210</td>
+      <td>1.076613</td>
+      <td>999.0</td>
+      <td>2.014113</td>
+      <td>32.79</td>
+      <td>-117.09</td>
+      <td>1.705684</td>
+      <td>1.809200</td>
+    </tr>
+    <tr>
+      <td>17323</td>
+      <td>4.2026</td>
+      <td>24.0</td>
+      <td>5.617544</td>
+      <td>0.989474</td>
+      <td>731.0</td>
+      <td>2.564912</td>
+      <td>34.59</td>
+      <td>-120.14</td>
+      <td>2.098392</td>
+      <td>1.683200</td>
+    </tr>
+    <tr>
+      <td>10056</td>
+      <td>3.1094</td>
+      <td>14.0</td>
+      <td>5.869565</td>
+      <td>1.094203</td>
+      <td>302.0</td>
+      <td>2.188406</td>
+      <td>39.26</td>
+      <td>-121.00</td>
+      <td>1.694140</td>
+      <td>1.792000</td>
+    </tr>
+    <tr>
+      <td>15750</td>
+      <td>3.3068</td>
+      <td>52.0</td>
+      <td>4.801205</td>
+      <td>1.066265</td>
+      <td>1526.0</td>
+      <td>2.298193</td>
+      <td>37.77</td>
+      <td>-122.45</td>
+      <td>2.194403</td>
+      <td>2.388002</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>Now that we have created the features let's evaluate the models in the raw data without the stacked features to check their performances:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>sklearn.metrics </span><span style="color:#b48ead;">import </span><span>mean_squared_error
+</span><span>en.</span><span style="color:#bf616a;">fit</span><span>(xtrain.iloc[:,:-</span><span style="color:#d08770;">2</span><span>], ytrain)
+</span><span>ypred_en = en.</span><span style="color:#bf616a;">predict</span><span>(xtest)
+</span><span style="color:#96b5b4;">print</span><span>(</span><span style="color:#bf616a;">mean_squared_error</span><span>(ytest, ypred_en))
+</span><span>
+</span><span>knn.</span><span style="color:#bf616a;">fit</span><span>(xtrain.iloc[:,:-</span><span style="color:#d08770;">2</span><span>], ytrain)
+</span><span>ypred_knn = knn.</span><span style="color:#bf616a;">predict</span><span>(xtest)
+</span><span style="color:#96b5b4;">print</span><span>(</span><span style="color:#bf616a;">mean_squared_error</span><span>(ytest, ypred_knn))
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>0.7562926012142382
+</span><span>1.136942049088978
+</span></code></pre>
+<p>Now we create the features with the trained models for the test data:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>xtest[&#39;</span><span style="color:#a3be8c;">en</span><span>&#39;] = ypred_en
+</span><span>xtest[&#39;</span><span style="color:#a3be8c;">knn</span><span>&#39;] = ypred_knn
+</span><span>xtest.</span><span style="color:#bf616a;">head</span><span>()
+</span></code></pre>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>.dataframe tbody tr th {
+</span><span>    vertical-align: top;
+</span><span>}
+</span><span>
+</span><span>.dataframe thead th {
+</span><span>    text-align: right;
+</span><span>}
+</span></code></pre>
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>MedInc</th>
+      <th>HouseAge</th>
+      <th>AveRooms</th>
+      <th>AveBedrms</th>
+      <th>Population</th>
+      <th>AveOccup</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>en</th>
+      <th>knn</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>20046</td>
+      <td>1.6812</td>
+      <td>25.0</td>
+      <td>4.192201</td>
+      <td>1.022284</td>
+      <td>1392.0</td>
+      <td>3.877437</td>
+      <td>36.06</td>
+      <td>-119.01</td>
+      <td>1.470084</td>
+      <td>1.6230</td>
+    </tr>
+    <tr>
+      <td>3024</td>
+      <td>2.5313</td>
+      <td>30.0</td>
+      <td>5.039384</td>
+      <td>1.193493</td>
+      <td>1565.0</td>
+      <td>2.679795</td>
+      <td>35.14</td>
+      <td>-119.46</td>
+      <td>1.744788</td>
+      <td>1.0822</td>
+    </tr>
+    <tr>
+      <td>15663</td>
+      <td>3.4801</td>
+      <td>52.0</td>
+      <td>3.977155</td>
+      <td>1.185877</td>
+      <td>1310.0</td>
+      <td>1.360332</td>
+      <td>37.80</td>
+      <td>-122.44</td>
+      <td>2.233643</td>
+      <td>2.8924</td>
+    </tr>
+    <tr>
+      <td>20484</td>
+      <td>5.7376</td>
+      <td>17.0</td>
+      <td>6.163636</td>
+      <td>1.020202</td>
+      <td>1705.0</td>
+      <td>3.444444</td>
+      <td>34.28</td>
+      <td>-118.72</td>
+      <td>2.413336</td>
+      <td>2.2456</td>
+    </tr>
+    <tr>
+      <td>9814</td>
+      <td>3.7250</td>
+      <td>34.0</td>
+      <td>5.492991</td>
+      <td>1.028037</td>
+      <td>1063.0</td>
+      <td>2.483645</td>
+      <td>36.62</td>
+      <td>-121.93</td>
+      <td>2.088660</td>
+      <td>1.6690</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p>With the stacked attributes in hand now we train two models, one without using them, for comparison and another using, let's compare the results:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;">#Without stacked features
+</span><span>gbm.</span><span style="color:#bf616a;">fit</span><span>(xtrain.iloc[:,:-</span><span style="color:#d08770;">2</span><span>], ytrain.values,
+</span><span>        </span><span style="color:#bf616a;">eval_set</span><span>=[(xtest.iloc[:,:-</span><span style="color:#d08770;">2</span><span>],ytest.values)],
+</span><span>        </span><span style="color:#bf616a;">early_stopping_rounds</span><span>=</span><span style="color:#d08770;">20</span><span>,
+</span><span>        </span><span style="color:#bf616a;">verbose</span><span>=</span><span style="color:#d08770;">False</span><span>)
+</span><span>ypred = gbm.</span><span style="color:#bf616a;">predict</span><span>(xtest.iloc[:,:-</span><span style="color:#d08770;">2</span><span>])
+</span><span style="color:#96b5b4;">print</span><span>(&quot;</span><span style="color:#a3be8c;">Without stacked features</span><span>&quot;, </span><span style="color:#bf616a;">mean_squared_error</span><span>(ytest, ypred))
+</span><span style="color:#65737e;"># With stacked features
+</span><span>gbm.</span><span style="color:#bf616a;">fit</span><span>(xtrain, ytrain.values,
+</span><span>        </span><span style="color:#bf616a;">eval_set</span><span>=[(xtest,ytest.values)],
+</span><span>        </span><span style="color:#bf616a;">early_stopping_rounds</span><span>=</span><span style="color:#d08770;">20</span><span>,
+</span><span>        </span><span style="color:#bf616a;">verbose</span><span>=</span><span style="color:#d08770;">False</span><span>)
+</span><span>ypred = gbm.</span><span style="color:#bf616a;">predict</span><span>(xtest)
+</span><span style="color:#96b5b4;">print</span><span>(&quot;</span><span style="color:#a3be8c;">With stacked features</span><span>&quot;, </span><span style="color:#bf616a;">mean_squared_error</span><span>(ytest, ypred))
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Without stacked features 0.5828429815199971
+</span><span>With stacked features 0.5359477372727965
+</span></code></pre>
+<p>We've had a significant improvement using &quot;stacked&quot; attributes, concluding our meta estimator learns the best way to combine the features of other estimators, learning their generalization errors and how to correct them, ensuring a much better generalization.</p>
+<h4 id="references">References</h4>
+<p><a href="http://machine-learning.martinsewell.com/ensembles/stacking/">Stacked Generalization</a></p>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p>https://www.sciencedirect.com/science/article/pii/S0893608005800231</p>
+</div>
+<div class="footnote-definition" id="2"><sup class="footnote-definition-label">2</sup>
+<p>HASTIE, Trevor et al. The elements of statistical learning: data mining, inference and prediction. P. 252, 2005</p>
+</div>
+
+
+        </div>
+        <div id="footer">
+            Jader Martins - 2021
+        </div>
+    </body>
+</html>

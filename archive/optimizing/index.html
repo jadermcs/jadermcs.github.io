@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>.halted</title>
+        <link rel="stylesheet" type="text/css" href="/default.css" />
+        <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML,Safe"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="/">.halted</a>
+            </div>
+            <div id="navigation">
+                <a href="/about">about</a>
+                <a href="/projects">projects</a>
+                <a href="/archive">archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            
+<h1 class="title">
+  Optimization - Caching
+</h1>
+<p class="subtitle"><strong>2023-01-27</strong></p>
+<p>In this post I take notes on how to optimize python code and also try to define
+possible approaches in this process. This will be a series of posts, where later
+I expect to cover profiling, where we can have a deep diagnosis on how to improve
+our code.</p>
+<p>I will take long time discussing algorithmic complexity so I will just jump to an
+exponential complexity code, and then present many ways on how to optimize it. So
+here is our exponential complexity program.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;">#!/usr/bin/python3
+</span><span>
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">fib</span><span>(</span><span style="color:#bf616a;">a</span><span>):
+</span><span>    </span><span style="color:#b48ead;">if </span><span>a &lt;= </span><span style="color:#d08770;">1</span><span>:
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">1</span><span>) + </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">2</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">for </span><span>i </span><span style="color:#b48ead;">in </span><span>[</span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">20</span><span>, </span><span style="color:#d08770;">50</span><span>]:
+</span><span>    </span><span style="color:#96b5b4;">print</span><span>(</span><span style="color:#bf616a;">fib</span><span>(i))
+</span></code></pre>
+<p>This code call the function fib many times, recomputing the same results. A simple
+solution is use a dict to keep previous computed data stored.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;">#!/usr/bin/python3
+</span><span>
+</span><span>num = {</span><span style="color:#d08770;">0</span><span>: </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">1</span><span>:</span><span style="color:#d08770;">1</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">fib</span><span>(</span><span style="color:#bf616a;">a</span><span>):
+</span><span>    </span><span style="color:#b48ead;">if </span><span>a not in num:
+</span><span>        num[a] = </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">1</span><span>) + </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">2</span><span>)
+</span><span>    </span><span style="color:#b48ead;">return </span><span>num[a]
+</span><span>
+</span><span style="color:#b48ead;">for </span><span>i </span><span style="color:#b48ead;">in </span><span>[</span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">20</span><span>, </span><span style="color:#d08770;">50</span><span>]:
+</span><span>    </span><span style="color:#96b5b4;">print</span><span>(</span><span style="color:#bf616a;">fib</span><span>(i))
+</span></code></pre>
+<p>Also with functools you can cache the results with the cache decorator. So it will
+store the function calls.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;">#!/usr/bin/python3
+</span><span style="color:#b48ead;">from </span><span>functools </span><span style="color:#b48ead;">import </span><span>cache
+</span><span>
+</span><span>@</span><span style="color:#bf616a;">cache
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">fib</span><span>(</span><span style="color:#bf616a;">a</span><span>):
+</span><span>    </span><span style="color:#b48ead;">if </span><span>a &lt;= </span><span style="color:#d08770;">1</span><span>:
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">1</span><span>) + </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">2</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">for </span><span>i </span><span style="color:#b48ead;">in </span><span>[</span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">20</span><span>, </span><span style="color:#d08770;">50</span><span>]:
+</span><span>    </span><span style="color:#96b5b4;">print</span><span>(</span><span style="color:#bf616a;">fib</span><span>(i))
+</span></code></pre>
+<p>The only restriction is that the parameters of the function must be hashable and
+it has no side effects. Another possible approch is instead of caching to memory,
+caching to disk, so the computed data could be reused between different runs.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;">#!/usr/bin/python3
+</span><span style="color:#b48ead;">from </span><span>joblib </span><span style="color:#b48ead;">import </span><span>Memory
+</span><span>
+</span><span>location = &#39;</span><span style="color:#a3be8c;">./cachedir</span><span>&#39;
+</span><span>memory = </span><span style="color:#bf616a;">Memory</span><span>(location, </span><span style="color:#bf616a;">verbose</span><span>=</span><span style="color:#d08770;">0</span><span>)
+</span><span>
+</span><span>@memory.</span><span style="color:#bf616a;">cache
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">fib</span><span>(</span><span style="color:#bf616a;">a</span><span>):
+</span><span>    </span><span style="color:#b48ead;">if </span><span>a &lt;= </span><span style="color:#d08770;">1</span><span>:
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">1</span><span>) + </span><span style="color:#bf616a;">fib</span><span>(a-</span><span style="color:#d08770;">2</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">for </span><span>i </span><span style="color:#b48ead;">in </span><span>[</span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">20</span><span>, </span><span style="color:#d08770;">50</span><span>]:
+</span><span>    </span><span style="color:#96b5b4;">print</span><span>(</span><span style="color:#bf616a;">fib</span><span>(i))
+</span></code></pre>
+<p>Caching names, methods, etc.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span>
+</span></code></pre>
+
+
+        </div>
+        <div id="footer">
+            Jader Martins - 2021
+        </div>
+    </body>
+</html>

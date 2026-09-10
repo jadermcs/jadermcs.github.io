@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>.halted</title>
+        <link rel="stylesheet" type="text/css" href="/default.css" />
+        <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
+        <script type="text/javascript"
+                src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_CHTML,Safe"></script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="logo">
+                <a href="/">.halted</a>
+            </div>
+            <div id="navigation">
+                <a href="/about">about</a>
+                <a href="/projects">projects</a>
+                <a href="/archive">archive</a>
+            </div>
+        </div>
+
+        <div id="content">
+            
+<h1 class="title">
+  The Problem of Induction
+</h1>
+<p class="subtitle"><strong>2020-09-03</strong></p>
+<p>The cause and effect framework is a natural way of human thinking</p>
+<h1 id="epistemology">Epistemology</h1>
+<p>There's a branch in philosophy concerning the validity, nature, and other issues in
+the scientific reasoning, this branch is known as Epistemology, from Greek &quot;study of the
+knowledge&quot;,</p>
+<p>In this post we will reason about the inferencial aspect of reasoning, it is how
+we know that a phenomena A causes a phenomena B, in formal syntax ($A \rightarrow B$)?
+https://en.wikipedia.org/wiki/Epistemology
+https://plato.stanford.edu/entries/epistemology/</p>
+<h2 id="deduction">Deduction</h2>
+<p>In fields like Philosophy, Mathematics, and some times Physics, the corpus of knowledge
+resides in axioms, theorems and pure forms. So every conclusion could be obtained by a
+natural deduction over the initial truths.</p>
+<p>https://en.wikipedia.org/wiki/Theory_of_forms</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>  1. forAll(x, Gx -&gt; Hx)      P            // premise
+</span><span>  2. forAll(x, Hx -&gt; ~Ix)     P            // premise
+</span><span>  3. Ga -&gt; Ha                  1 E.forAll  // eliminate forAll in 1
+</span><span>  4. Ha -&gt; ~Ia                 2 E.forAll  // eliminate forAll in 2
+</span><span>  5. Ga -&gt; ~Ia                 3,4 SH      // hypothetic silogism in 3 and 4
+</span><span>  6. forAll(x, Gx -&gt; ~Ix)      5 I.forAll  // introduces forAll
+</span></code></pre>
+<p>For example, Einstein with a pure mathematical reasoning deduced the &quot;$e = mc^2$&quot; formula.</p>
+<h2 id="indutivo">Indutivo</h2>
+<p>For other bodies of knowledge, like Psychology, Economy, Epidemiology, is not possible
+(at least for know) to obtain perfect information about the studied object. There's
+instrumental erros, randomized outputs given human dependecy, etc.</p>
+<p>Observação de corpos celestes: F = G<em>M</em>m/r^2</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Ex: x conduz eletricidade
+</span><span>Mx: x é um metal.
+</span><span>
+</span><span>1. Ef ^ Mf // iron conducts eletricity and is a metal
+</span><span>2. Ec ^ Mc // copper conducts eletricity and is a metal
+</span><span>3. Eg ^ Mg // gold conducts eletricity and is a metal
+</span><span>4. Es ^ Ms // silver conducts eletricity and is a metal
+</span><span>...
+</span></code></pre>
+<p>So, every metal conducts eletricity...</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>    forAll(x, Mx -&gt; Ex)
+</span></code></pre>
+<p>Or, every conductor of electricity is a metal??</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>    forAll(x, Ex -&gt; Mx)
+</span></code></pre>
+<p>Water conducts eletricity, but isn't a metal.</p>
+<p>Metals conducts eletricity, which is truth for this case, but can be coincidence for other
+correlations.</p>
+<p>If A and B are correlated, how we know if A causes B ($A \rightarrow B$), or B causes A
+($B \rightarrow A$), or they are just mutually causes by a third part, Z ($Z \rightarrow A
+\land Z \rightarrow B$)??</p>
+<p>https://plato.stanford.edu/entries/counterfactuals</p>
+<h2 id="the-problem-of-induction">The &quot;Problem of Induction&quot;</h2>
+<p>It is a famous <a href="https://plato.stanford.edu/entries/induction-problem/">epistemological problem</a>
+the begins with the &quot;Enquiry on Human Understading&quot; written by David Hume in XXX
+where he YYYYY
+How we know if a hypothesis is general enough?</p>
+<p>, later in XXX, Immanuel Kant in his &quot;Critique of Pure Reason&quot; argues that
+YYYY.</p>
+<p>Firstly we need  to formulate a hypothesis
+- Impossível ter certeza no raciocínio indutivo.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>- Busca pela conclusão mais provável e por contra exemplos.
+</span><span>
+</span><span>- Infinitas funções podem explicar um par (observações,propriedades)
+</span></code></pre>
+<h2 id="probability-at-rescue">Probability at Rescue</h2>
+<p>Hume horns</p>
+<h2 id="a-perfect-induction-system">A Perfect Induction System</h2>
+<p>Given that we have the data that really describes and observable phenomena, this framework
+garantees to find the best (most probable) hypothesis.</p>
+<p>https://www.gwern.net/Correlation
+https://www.gwern.net/Causality</p>
+<p>*** O &quot;Problema da Indução&quot;</p>
+<p>*** Navalha de Ockham e a Indução Universal de Solomonoff</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>- Se o mundo pode ser descrito por programas de computador, programas menores são
+</span><span>  mais prováveis de serem tal descrição. (Teoria da Probabilidade Algorítmica)
+</span><span>
+</span><span>- Indução Universal não é computável (Problema da Parada).
+</span><span>
+</span><span>- AIXI -&gt; AGI
+</span><span>
+</span><span>- Certas questões do aprendizado de máquina só podem ser explicadas pela teoria
+</span><span>   do aprendizado computacional, não pelo aprendizado estatístico.
+</span><span>
+</span><span>- Computação tem importância tanto prática (engenharia) quanto teórica para o
+</span><span>   aprendizado de **máquina** (limites da máquina).
+</span><span>
+</span><span>- Recursos são finitos, tempo, espaço, custos, Nubank por exemplo implementa suas
+</span><span>   máquinas de inferência em Clojure/Spark, R não é viável.
+</span><span>
+</span><span>- SVMs tem uma teoria estatística brilhante (Dimensão VC, kernels R^infinito) mas
+</span><span>   entraram em desuso pelo alto custo computacional e resultados práticos limitados.
+</span><span>
+</span><span>- Teoria do &quot;Aprendível&quot;/Provavelmente Aproximadamente Correto, podemos aprender
+</span><span>   um função de criptografia se tivéssemos os pares (rawtext, encryptedtext)?
+</span><span>
+</span><span>- Podemos resolver quais classes de problemas  com aprendizado de máquina? P? NP? BQP?
+</span><span>
+</span><span>- Computadores tem precisão finita, não operamos por Reais mas sim por Reais
+</span><span>   Computáveis (conjunto contável e na prática finito), o que gera implicações e
+</span><span>   limitações teóricas.
+</span></code></pre>
+
+
+        </div>
+        <div id="footer">
+            Jader Martins - 2021
+        </div>
+    </body>
+</html>
