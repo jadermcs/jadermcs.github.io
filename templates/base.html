@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ lang }}" lang="{{ lang }}">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title>{{config.extra.blog_title}}</title>
@@ -13,12 +13,20 @@
     <body>
         <div id="header">
             <div id="logo">
-                <a href="/">{{config.extra.blog_title}}</a>
+                <a href="{{ get_url(path='/', lang=lang) }}">{{config.extra.blog_title}}</a>
             </div>
             <div id="navigation">
-                <a href="/about">about</a>
-                <a href="/projects">projects</a>
-                <a href="/archive">archive</a>
+                {% if lang == "pt" %}
+                <a href="{{ get_url(path='about', lang='pt') }}">sobre</a>
+                <a href="{{ get_url(path='projects', lang='pt') }}">projetos</a>
+                <a href="{{ get_url(path='archive', lang='pt') }}">arquivo</a>
+                <a href="{{ get_url(path='/', lang='en') }}">EN</a>
+                {% else %}
+                <a href="{{ get_url(path='about', lang='en') }}">about</a>
+                <a href="{{ get_url(path='projects', lang='en') }}">projects</a>
+                <a href="{{ get_url(path='archive', lang='en') }}">archive</a>
+                <a href="{{ get_url(path='/', lang='pt') }}">PT</a>
+                {% endif %}
             </div>
         </div>
 

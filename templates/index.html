@@ -3,9 +3,24 @@
 {% block content %}
 <h1>{{ section.title }}</h1>
 
+{% if lang == "pt" %}
+<p>Bem-vindo ao meu blog!</p>
+<p>Sou o Jader. Neste blog publico alguns pensamentos pessoais e assuntos que
+estou estudando no momento. Dê uma olhada na página <a href="{{ get_url(path='about', lang='pt') }}"
+target="_blank">sobre</a> para mais informações.</p>
+
+<p>Aqui está uma lista de posts recentes para a sua leitura:</p>
+
+<h2>Posts</h2>
+{% set section = get_section(path="archive/_index.pt.md") %}
+{% for page in section.pages | slice(end=4) %}
+    <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a></li>
+{% endfor %}
+<p>…ou você pode encontrar mais no <a href="{{ get_url(path='archive', lang='pt') }}">arquivo</a>.</p>
+{% else %}
 <p>Welcome to my blog!</p>
 <p>I am Jader, In this blog I publish some personal toughts and subjects that I
-am currently studing. Take a look at my <a href="/about.html"
+am currently studing. Take a look at my <a href="{{ get_url(path='about', lang='en') }}"
 target="_blank">about</a> for more info.</p>
 
 <p>Here is a list of recent posts here for your reading pleasure:</p>
@@ -15,7 +30,8 @@ target="_blank">about</a> for more info.</p>
 {% for page in section.pages | slice(end=4) %}
     <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a></li>
 {% endfor %}
-<p>…or you can find more in the <a href="/archive">archives</a>.</p>
+<p>…or you can find more in the <a href="{{ get_url(path='archive', lang='en') }}">archives</a>.</p>
+{% endif %}
 
 
 <h2>Publications</h2>

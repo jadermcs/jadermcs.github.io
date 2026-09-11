@@ -5,7 +5,7 @@ date = 2026-09-10
 
 **context:** Recently, I saw a post on LinkedIn by a technology expert. His take on the risks of AI (artificial intelligence), and [AGI (artificial general intelligence)](https://en.wikipedia.org/wiki/Artificial_general_intelligence) in particular, is that the hype exists to push society into investing in the technology so that a few people can make money out of it, and that the threat itself is not real, just a marketing stunt. It is striking to watch someone who works with the technology dismiss it this way, and I think part of the reason is the language we reach for when we argue about AI risk: it borrows so heavily from how we talk about people that a reader can reject the argument by rejecting the borrowed words.
 
-**analogy:** We should describe these risks in less human-like terms, to separate the sci-fi part from the real dangers. A biological virus is a better analogy. We happily say a virus "evades" the immune system or "wants" to spread, and nobody is confused by the shorthand or calls the next pandemic a marketing stunt. The teleological language is not the problem; the problem is that the same language, pointed at AI, drags the conversation into science fiction.
+**analogy:** We should explain these concepts in less human-like terms, to separate the sci-fi part from the real dangers. A better analogy is a biological virus. A virus doesn't want anything, and yet nobody argues that pandemics are a marketing stunt because viruses lack intentions.
 
 ## Hype or not?
 

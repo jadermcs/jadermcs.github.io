@@ -1,6 +1,9 @@
 # The URL the site will be built for
 base_url = "https://jadermcs.github.io"
 
+# The site's default language
+default_language = "en"
+
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 
@@ -11,6 +14,10 @@ build_search_index = true
 # Whether to do syntax highlighting
 # Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
 highlight_code = true
+
+[languages.pt]
+# Brazilian Portuguese version, served under /pt/
+build_search_index = true
 
 [extra]
 # Put all your custom variables here
